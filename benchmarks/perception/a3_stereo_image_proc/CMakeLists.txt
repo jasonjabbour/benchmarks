@@ -45,4 +45,4 @@ set(node_plugins "${node_plugins}robotperf::perception::DisparityOutputComponent
 #   DESTINATION share/${PROJECT_NAME}
 # )
 
-ament_auto_package(INSTALL_TO_SHARE launch)
+ament_auto_package(INSTALL_TO_SHARE launch description)
