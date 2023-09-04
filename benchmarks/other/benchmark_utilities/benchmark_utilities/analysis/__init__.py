@@ -1513,6 +1513,7 @@ class BenchmarkAnalyzer:
         Returns:
             list: list of relative latencies, in ms
         """
+
         image_pipeline_msg_sets_ns = []
         # if multidimensional:list
         if type(image_pipeline_msg_sets[0]) == list:
@@ -1547,6 +1548,7 @@ class BenchmarkAnalyzer:
                 aux_set.append((target_chain_ns[msg_index] - previous) / 1e6)
             image_pipeline_msg_sets_ns.append(aux_set)
 
+        # print(image_pipeline_msg_sets_ns)
         return image_pipeline_msg_sets_ns
 
     def print_timeline(self, image_pipeline_msg_sets):
@@ -2456,6 +2458,7 @@ class BenchmarkAnalyzer:
         max_sum = sum(self.image_pipeline_msg_sets_barchart[0])
         max_index = 0
         for i, lst in enumerate(self.image_pipeline_msg_sets_barchart):
+            print(lst)
             current_sum = sum(lst)            
             if current_sum > max_sum:
                 max_sum = current_sum
@@ -2552,7 +2555,7 @@ class BenchmarkAnalyzer:
         outs, err = run('cd /tmp/benchmarks && git log -1', shell=True)
         print(outs)
 
-    def analyze_latency(self, tracepath=None, add_power=False):
+    def analyze_latency(self, tracepath=None, add_power=False, upload_data=False):
         """Analyze latency of the image pipeline
 
         Args:
@@ -2573,7 +2576,7 @@ class BenchmarkAnalyzer:
         self.index_to_plot = self.get_index_to_plot_latency()
         self.print_timing_pipeline()
         # self.draw_tracepoints()
-                    
+            
         self.print_markdown_table(
             [self.image_pipeline_msg_sets_barchart],
             ["grey-boxed"],
@@ -2763,3 +2766,23 @@ class BenchmarkAnalyzer:
         else:
             print("Type {} for filtering trace sets does not exist, setting message ID analysis type".format(filter_type))
             self.trace_sets_filter_type = "ID"
+
+    def get_raw_latency_data(self) -> list:
+        """
+        Calculates the raw latency data for each message set in the pipeline.
+        
+        Returns:
+            list: A list of total latencies for each set of msgs.
+        """
+        
+        # Obtain relative latencies for each set of messages 
+        pipeline_msg_sets = self.barchart_data_latency(self.image_pipeline_msg_sets)
+        
+        raw_latency_data = []
+        
+        # Iterate through each set and sum up the relative latencies
+        for msg_set in pipeline_msg_sets:
+            raw_latency_data.append(sum(msg_set))
+
+        return raw_latency_data
+

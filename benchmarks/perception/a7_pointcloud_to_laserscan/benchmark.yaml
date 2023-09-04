@@ -27,7 +27,7 @@ reproduction:
   # Analyze the trace data
   cd /tmp/
 	mkdir analysis
-	ros2 launch a7_pointcloud_to_laserscan analyze_a7_pointcloud_to_laserscan.launch.py trace_path:=$HOME/.ros/tracing
+	ros2 launch a7_pointcloud_to_laserscan analyze_a7_pointcloud_to_laserscan.launch.py trace_path:=$HOME/.ros/tracing upload_data:=true
 
 results:
 

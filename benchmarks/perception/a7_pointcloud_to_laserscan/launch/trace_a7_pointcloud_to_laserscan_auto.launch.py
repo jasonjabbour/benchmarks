@@ -200,7 +200,7 @@ class TestPointCloudToLaserScanNode(ROS2BenchmarkTest):
 
     # Custom configurations
     config = ROS2BenchmarkConfig(
-        benchmark_name='pointcloud_to_laserscan::PointCloudToLaserScanNode Benchmark',
+        benchmark_name='a7_pointcloud_to_laserscan',
         input_data_path=ROSBAG_PATH,
         # Upper and lower bounds of peak throughput search window
         publisher_upper_frequency=30.0,
