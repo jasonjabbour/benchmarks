@@ -19,7 +19,8 @@
 	"mounts": [
 		"source=${localWorkspaceFolder},target=/tmp/benchmark_ws/src/benchmarks,type=bind,consistency=cached",
 		"source=${localWorkspaceFolder}/../rosbags,target=/tmp/benchmark_ws/src/rosbags,type=bind,consistency=cached",
-		"source=${localWorkspaceFolder}/../ros2_benchmark,target=/tmp/benchmark_ws/src/ros2_benchmark,type=bind,consistency=cached"
+		"source=${localWorkspaceFolder}/../ros2_benchmark,target=/tmp/benchmark_ws/src/ros2_benchmark,type=bind,consistency=cached", 
+		"source=${localWorkspaceFolder}/../unitree-go2-ros2,target=/tmp/benchmark_ws/src/unitree-go2-ros2,type=bind,consistency=cached" //For end-to-end quadruped
 	],
 	// "workspaceMount": "source=${localWorkspaceFolder},target=/tmp/benchmark_ws/src/benchmarks,type=bind,consistency=cached", 
 	"workspaceFolder": "/tmp/benchmark_ws/",

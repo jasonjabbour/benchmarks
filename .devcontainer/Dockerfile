@@ -11,7 +11,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         ros-humble-theora-image-transport ros-humble-gazebo-msgs \
         ros-humble-rqt* ros-humble-depthimage-to-laserscan \
         ros-humble-rviz2 libogre-1.12-dev ros-humble-launch-testing \
-        ros-humble-pointcloud-to-laserscan
+        ros-humble-pointcloud-to-laserscan ros-humble-rviz2
 
 RUN pip3 install wasabi bokeh==2.4.3 selenium plotly kaleido arrow
 RUN pip3 install xacro
@@ -19,6 +19,34 @@ RUN pip3 install xacro
 RUN add-apt-repository ppa:mozillateam/ppa -y
 RUN echo "Package: *\nPin: release o=LP-PPA-mozillateam\nPin-Priority: 1001\n\nPackage: firefox\nPin: version 1:1snap1-0ubuntu2\nPin-Priority: -1" > /etc/apt/preferences.d/mozilla-firefox
 RUN apt-get update && apt-get install -y firefox firefox-geckodriver
+
+# BENCHMARK SPECIFIC TOOLS FOR END-TO-END -----
+# Need aptitude to better manage dependencies used by gazebo-ros2-control package
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends aptitude
+
+# Install specific ROS packages with aptitude for better dependency resolution
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
+    aptitude -y install ros-humble-gazebo-ros2-control
+
+# Install remaining ROS packages
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends \
+        ros-humble-xacro \
+        ros-humble-robot-localization \
+        ros-humble-ros2-controllers \
+        ros-humble-ros2-control \
+        ros-humble-velodyne \
+        ros-humble-velodyne-gazebo-plugins \
+        ros-humble-velodyne-description \
+        python3-rosdep \
+        ros-humble-slam-toolbox \
+        ros-humble-cartographer \
+        ros-humble-cartographer-ros \
+        ros-humble-navigation2 \
+        ros-humble-nav2-bringup \
+        imagemagick
+# -----
 
 # tracing
 # NOTE: lttng-modules-dkms should go in the host machine and NOT
@@ -32,9 +60,11 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && apt-get -y instal
         python3-bt2 babeltrace2 ros-humble-rqt-graph && \
         rm -rf /var/lib/apt/lists/*      
 
-
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
     echo "cd /tmp/benchmark_ws && rosdep update || true && apt-get update && rosdep install --from-paths src --ignore-src --rosdistro humble -y" >> /root/.bashrc
+
+# Set the RMW_IMPLEMENTATION to use Cyclone DDS (Needed for NAV2)
+RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
 
 # setup entrypoint
 COPY .devcontainer/ros_entrypoint.sh /
