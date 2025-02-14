@@ -275,6 +275,69 @@ void TRACEPOINT(
     laserscan_output_msg_size_arg);
 }
 
+
+// joint_trajectory_output
+void TRACEPOINT(
+  robotperf_joint_trajectory_output_cb_init,
+  const void * joint_trajectory_output_node_arg,
+  const void * joint_trajectory_output_scan_msg_arg,
+  uint32_t joint_trajectory_output_header_nsec_arg,
+  uint32_t joint_trajectory_output_header_sec_arg,
+  size_t joint_trajectory_output_msg_size_arg)
+{
+  CONDITIONAL_TP(
+    robotperf_joint_trajectory_output_cb_init,
+    joint_trajectory_output_node_arg,
+    joint_trajectory_output_scan_msg_arg,
+    joint_trajectory_output_header_nsec_arg,
+    joint_trajectory_output_header_sec_arg,
+    joint_trajectory_output_msg_size_arg);
+}
+
+void TRACEPOINT(
+  robotperf_joint_trajectory_output_cb_fini,
+  const void * joint_trajectory_output_node_arg,
+  const void * joint_trajectory_output_msg_arg,
+  uint32_t joint_trajectory_output_header_nsec_arg,
+  uint32_t joint_trajectory_output_header_sec_arg,
+  size_t joint_trajectory_output_msg_size_arg)
+{
+  CONDITIONAL_TP(
+    robotperf_joint_trajectory_output_cb_fini,
+    joint_trajectory_output_node_arg,
+    joint_trajectory_output_msg_arg,
+    joint_trajectory_output_header_nsec_arg,
+    joint_trajectory_output_header_sec_arg,
+    joint_trajectory_output_msg_size_arg);
+}
+
+// twist_input
+void TRACEPOINT(
+  robotperf_twist_input_cb_init,
+  const void * twist_input_node_arg,
+  const void * twist_input_msg_arg,
+  size_t twist_input_msg_size_arg)
+{
+  CONDITIONAL_TP(
+    robotperf_twist_input_cb_init,
+    twist_input_node_arg,
+    twist_input_msg_arg,
+    twist_input_msg_size_arg);
+}
+
+void TRACEPOINT(
+  robotperf_twist_input_cb_fini,
+  const void * twist_input_node_arg,
+  const void * twist_input_msg_arg,
+  size_t twist_input_msg_size_arg)
+{
+  CONDITIONAL_TP(
+    robotperf_twist_input_cb_fini,
+    twist_input_node_arg,
+    twist_input_msg_arg,
+    twist_input_msg_size_arg);
+}
+
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #else

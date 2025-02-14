@@ -300,6 +300,78 @@ TRACEPOINT_EVENT(
   )
 )
 
+// robotperf joint_trajectory_output init callback
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  robotperf_joint_trajectory_output_cb_init,
+  TP_ARGS(
+    const void *, joint_trajectory_output_node_arg,
+    const void *, joint_trajectory_output_msg_arg,
+    uint32_t, joint_trajectory_output_header_nsec_arg,
+    uint32_t, joint_trajectory_output_header_sec_arg,
+    size_t, joint_trajectory_output_msg_size_arg),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, joint_trajectory_output_node, joint_trajectory_output_node_arg)
+    ctf_integer_hex(const void *, joint_trajectory_output_msg, joint_trajectory_output_msg_arg)
+    ctf_integer(uint32_t, joint_trajectory_output_header_nsec, joint_trajectory_output_header_nsec_arg)
+    ctf_integer(uint32_t, joint_trajectory_output_header_sec, joint_trajectory_output_header_sec_arg)
+    ctf_integer(size_t, joint_trajectory_output_msg_size, joint_trajectory_output_msg_size_arg)
+    ctf_string(version, tracetools_benchmark_VERSION)
+  )
+)
+
+// robotperf joint_trajectory_output end of callback (after publication)
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  robotperf_joint_trajectory_output_cb_fini,
+  TP_ARGS(
+    const void *, joint_trajectory_output_node_arg,
+    const void *, joint_trajectory_output_msg_arg,
+    uint32_t, joint_trajectory_output_header_nsec_arg,
+    uint32_t, joint_trajectory_output_header_sec_arg,
+    size_t, joint_trajectory_output_msg_size_arg),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, joint_trajectory_output_node, joint_trajectory_output_node_arg)
+    ctf_integer_hex(const void *, joint_trajectory_output_msg, joint_trajectory_output_msg_arg)
+    ctf_integer(uint32_t, joint_trajectory_output_header_nsec, joint_trajectory_output_header_nsec_arg)
+    ctf_integer(uint32_t, joint_trajectory_output_header_sec, joint_trajectory_output_header_sec_arg)
+    ctf_integer(size_t, joint_trajectory_output_msg_size, joint_trajectory_output_msg_size_arg)
+    ctf_string(version, tracetools_benchmark_VERSION)
+  )
+)
+
+// robotperf twist_input init callback
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  robotperf_twist_input_cb_init,
+  TP_ARGS(
+    const void *, twist_input_node_arg,
+    const void *, twist_input_msg_arg,
+    size_t, twist_input_msg_size_arg),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, twist_input_node, twist_input_node_arg)
+    ctf_integer_hex(const void *, twist_input_msg, twist_input_msg_arg)
+    ctf_integer(size_t, twist_input_msg_size, twist_input_msg_size_arg)
+    ctf_string(version, tracetools_benchmark_VERSION)
+  )
+)
+
+// robotperf twist_input end of callback (after publication)
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  robotperf_twist_input_cb_fini,
+  TP_ARGS(
+    const void *, twist_input_node_arg,
+    const void *, twist_input_msg_arg,
+    size_t, twist_input_msg_size_arg),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, twist_input_node, twist_input_node_arg)
+    ctf_integer_hex(const void *, twist_input_msg, twist_input_msg_arg)
+    ctf_integer(size_t, twist_input_msg_size, twist_input_msg_size_arg)
+    ctf_string(version, tracetools_benchmark_VERSION)
+  )
+)
+
 #endif  // _TRACETOOLS_BENCHMARK__TP_CALL_H_
 
 #include <lttng/tracepoint-event.h>

@@ -329,6 +329,82 @@ DECLARE_TRACEPOINT(
   uint32_t laserscan_output_header_sec_arg,
   size_t laserscan_output_msg_size)
 
+
+/// `robotperf_joint_trajectory_output_cb_init`
+/**
+ * Tracepoint while initiating the callback of robotperf::control::JointTrajectoryOutputComponent component
+ *
+ * Notes the `tracetools_benchmark` version automatically.
+ *
+ * \param[in] joint_trajectory_output_node rclcpp::node::Node subject to the callback
+ * \param[in] joint_trajectory_output_msg joint trajectory ROS message stored as trajectory_msgs::msg::JointTrajectory::SharedPtr
+ * \param[in] joint_trajectory_output_header_nsec_arg nanosec field of the header (std_msgs/Header) of trajectory_msgs::msg::JointTrajectory's ROS message 
+ * \param[in] joint_trajectory_output_header_sec_arg sec field of the header (std_msgs/Header) of trajectory_msgs::msg::JointTrajectory's ROS message 
+ * \param[in] joint_trajectory_output_msg_size size of joint trajectory ROS message stored as bytes
+ */
+DECLARE_TRACEPOINT(
+  robotperf_joint_trajectory_output_cb_init,
+  const void * joint_trajectory_output_node,
+  const void * joint_trajectory_output_msg,
+  uint32_t joint_trajectory_output_header_nsec_arg,
+  uint32_t joint_trajectory_output_header_sec_arg,
+  size_t joint_trajectory_output_msg_size)
+
+
+/// `robotperf_joint_trajectory_output_cb_fini`
+/**
+ * Tracepoint while finishing the callback of robotperf::control::JointTrajectoryOutputComponent component
+ *
+ * Notes the `tracetools_benchmark` version automatically.
+ *
+ * \param[in] joint_trajectory_output_node rclcpp::node::Node subject to the callback
+ * \param[in] joint_trajectory_output_msg joint trajectory ROS message stored as trajectory_msgs::msg::JointTrajectory::SharedPtr
+ * \param[in] joint_trajectory_output_header_nsec_arg nanosec field of the header (std_msgs/Header) of trajectory_msgs::msg::JointTrajectory's ROS message 
+ * \param[in] joint_trajectory_output_header_sec_arg sec field of the header (std_msgs/Header) of trajectory_msgs::msg::JointTrajectory's ROS message 
+ * \param[in] joint_trajectory_output_msg_size size of joint trajectory ROS message stored as bytes
+ */
+DECLARE_TRACEPOINT(
+  robotperf_joint_trajectory_output_cb_fini,
+  const void * joint_trajectory_output_node,
+  const void * joint_trajectory_output_msg,
+  uint32_t joint_trajectory_output_header_nsec_arg,
+  uint32_t joint_trajectory_output_header_sec_arg,
+  size_t joint_trajectory_output_msg_size)
+
+
+/// `robotperf_twist_input_cb_init`
+/**
+ * Tracepoint while initiating the callback of robotperf::control::TwistInputComponent component.
+ *
+ * Notes the `tracetools_benchmark` version automatically.
+ *
+ * \param[in] twist_input_node rclcpp::node::Node subject to the callback.
+ * \param[in] twist_input_msg twist ROS message stored as geometry_msgs::msg::TwistStamped::SharedPtr.
+ * \param[in] twist_input_msg_size size of twist ROS message stored as bytes.
+ */
+DECLARE_TRACEPOINT(
+  robotperf_twist_input_cb_init,
+  const void * twist_input_node,
+  const void * twist_input_msg,
+  size_t twist_input_msg_size)
+
+/// `robotperf_twist_input_cb_fini`
+/**
+ * Tracepoint while finishing the callback of robotperf::control::TwistInputComponent component.
+ *
+ * Notes the `tracetools_benchmark` version automatically.
+ *
+ * \param[in] twist_input_node rclcpp::node::Node subject to the callback.
+ * \param[in] twist_input_msg twist ROS message stored as geometry_msgs::msg::TwistStamped::SharedPtr.
+ * \param[in] twist_input_msg_size size of twist ROS message stored as bytes.
+ */
+DECLARE_TRACEPOINT(
+  robotperf_twist_input_cb_fini,
+  const void * twist_input_node,
+  const void * twist_input_msg,
+  size_t twist_input_msg_size)
+
+
 #ifdef __cplusplus
 }
 #endif
