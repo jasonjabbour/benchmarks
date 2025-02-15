@@ -21,7 +21,7 @@ from ros2_benchmark import ImageResolution
 from ros2_benchmark import ROS2BenchmarkConfig, ROS2BenchmarkTest
 
 # These are provided as environment variables for CI, you can manually hardcord them for other uses
-rosbag = 'end_to_end/rosbag2_end_to_end_1' #'end_to_end/rosbag2_cmd_vel_stamped' 
+rosbag = 'end_to_end/rosbag2_cmd_vel_stamped' #'end_to_end/rosbag2_cmd_vel_stamped' 
 package = 'end_to_end_perception' #os.environ.get('PACKAGE') # Example: 'a6_depthimage_to_laserscan'
 type = 'grey' #os.environ.get('TYPE') # Example: 'grey'
 metric = 'latency' #os.environ.get('METRIC') # Example: 'latency'
@@ -126,27 +126,43 @@ def launch_setup(container_prefix, container_sigterm_timeout):
                     ]                    
     )
 
-    # Publish input messages by using the messages stored in the buffer
-    playback_node = ComposableNode(
-        name='PlaybackNode',
-        namespace=TestEnd2EndPerception.generate_namespace(),
-        package='ros2_benchmark',
-        plugin='ros2_benchmark::PlaybackNode',
-        parameters=[{
-            'data_formats': [
-                # 'geometry_msgs/msg/TwistStamped',
-                'geometry_msgs/msg/Twist',
-            ],
-            'qos': {'reliability': 'reliable', 'durability': 'transient_local'},
-            # 'qos': {'reliability': 'best_effort', 'durability': 'transient_local'},
-            'use_sim_time': True,
-        }],
-        remappings=[('buffer/input0', 'data_loader/cmd_vel'), #subbing to
-                    ('input0', '/robotperf/benchmark/cmd_vel/smooth'), #publishing to
-                    ],                   
-    )
 
-    # TODO: Add input node here
+    if OPTION == 'with_monitor_node':
+        # Publish input messages by using the messages stored in the buffer
+        playback_node = ComposableNode(
+            name='PlaybackNode',
+            namespace=TestEnd2EndPerception.generate_namespace(),
+            package='ros2_benchmark',
+            plugin='ros2_benchmark::PlaybackNode',
+            parameters=[{
+                'data_formats': [
+                    'geometry_msgs/msg/TwistStamped',
+                ],
+                'qos': {'reliability': 'reliable', 'durability': 'transient_local'},
+                'use_sim_time': True,
+            }],
+            remappings=[('buffer/input0', 'data_loader/cmd_vel'), #subbing to
+                        ('input0', '/robotperf/benchmark/cmd_vel/smooth'), #publishing to
+                        ],                   
+        )
+    else: 
+                # Publish input messages by using the messages stored in the buffer
+        playback_node = ComposableNode(
+            name='PlaybackNode',
+            namespace=TestEnd2EndPerception.generate_namespace(),
+            package='ros2_benchmark',
+            plugin='ros2_benchmark::PlaybackNode',
+            parameters=[{
+                'data_formats': [
+                    'geometry_msgs/msg/TwistStamped',
+                ],
+                'qos': {'reliability': 'reliable', 'durability': 'transient_local'},
+                'use_sim_time': True,
+            }],
+            remappings=[('buffer/input0', 'data_loader/cmd_vel'), #subbing to
+                        ('input0', '/robotperf/benchmark/cmd_vel'), #publishing to
+                        ],                   
+        )
 
     # Place Input Tracepoint for Twist
     twist_input_node = ComposableNode(
@@ -155,14 +171,13 @@ def launch_setup(container_prefix, container_sigterm_timeout):
         plugin="robotperf::control::TwistInputComponent",
         name="twist_input_component",
         parameters=[
-            {"input_topic_name": "/robotperf/input/cmd_vel"},
+            {"input_topic_name": "/robotperf/benchmark/cmd_vel/smooth"},
         ],
         remappings=[
-            ("cmd_vel", "/robotperf/benchmark/cmd_vel/smooth"),
+            ("cmd_vel", "/robotperf/benchmark/cmd_vel"),
         ],
-        extra_arguments=[{'use_intra_process_comms': True}],
+        # extra_arguments=[{'use_intra_process_comms': True}],
     )
-
 
     quadruped_controller_node = Node(
         package="e1_autonomous_quadruped",
@@ -182,9 +197,24 @@ def launch_setup(container_prefix, container_sigterm_timeout):
             LaunchConfiguration('gait_config_path'),
         ],
         remappings=[("/cmd_vel/smooth", "playback/cmd_vel")],
+        # extra_arguments=[{'use_intra_process_comms': True}],
+
     )
 
-    # TODO: Add output node here
+    # Record Final Tracepoint once trajectory message is produced
+    trajectory_output_node = ComposableNode(
+        namespace="robotperf",
+        package="e1_autonomous_quadruped",
+        plugin="robotperf::control::JointTrajectoryOutputComponent",
+        name="joint_trajectory_output_component",
+        parameters=[
+            {'output_topic_name': '/robotperf/benchmark/joint_trajectory'},
+        ],
+        remappings=[
+            ('joint_trajectory', '/robotperf/benchmark/joint_trajectory'),
+        ],
+        # extra_arguments=[{'use_intra_process_comms': True}],
+    )
 
     monitor_node = ComposableNode(
         name='MonitorNode',
@@ -212,7 +242,8 @@ def launch_setup(container_prefix, container_sigterm_timeout):
         composable_node_descriptions_option=[
             data_loader_node,
             playback_node,
-
+            twist_input_node,
+            trajectory_output_node
         ]
 
     composable_node_container = ComposableNodeContainer(

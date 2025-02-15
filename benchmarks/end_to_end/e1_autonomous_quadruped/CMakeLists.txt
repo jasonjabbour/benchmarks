@@ -11,85 +11,88 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Find dependencies
-find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_auto REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclpy REQUIRED)
+ament_auto_find_build_dependencies()
+
+find_package(tracetools_benchmark REQUIRED)
 find_package(champ REQUIRED)
 find_package(champ_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
 find_package(urdf REQUIRED)
 find_package(message_filters REQUIRED)
-find_package(tracetools_benchmark REQUIRED)
 find_package(pointcloud_to_laserscan REQUIRED)
 
-# Define dependencies list
-set(dependencies
+# This is critical to ensure both the top-level include and the "champ" subdir
+# are on the include path so that #include <geometry/geometry.h> works:
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${champ_INCLUDE_DIRS}
+  ${champ_INCLUDE_DIRS}/champ
+)
+
+########################################
+# twist_input_component library
+ament_auto_add_library(twist_input_component SHARED src/twist_input_component.cpp)
+ament_target_dependencies(twist_input_component tracetools_benchmark rclcpp geometry_msgs)
+target_compile_definitions(twist_input_component PRIVATE "COMPOSITION_BUILDING_DLL")
+rclcpp_components_register_nodes(twist_input_component "robotperf::control::TwistInputComponent")
+
+########################################
+# joint_trajectory_output_component library
+ament_auto_add_library(joint_trajectory_output_component SHARED src/joint_trajectory_output_component.cpp)
+ament_target_dependencies(joint_trajectory_output_component tracetools_benchmark rclcpp trajectory_msgs)
+target_compile_definitions(joint_trajectory_output_component PRIVATE "COMPOSITION_BUILDING_DLL")
+rclcpp_components_register_nodes(joint_trajectory_output_component "robotperf::control::JointTrajectoryOutputComponent")
+
+########################################
+# robotperf_quadruped_controller library
+ament_auto_add_library(robotperf_quadruped_controller SHARED src/robotperf_quadruped_controller.cpp)
+ament_target_dependencies(robotperf_quadruped_controller
   rclcpp
-  rclpy
-  geometry_msgs
+  tracetools_benchmark
   champ
   champ_msgs
-  sensor_msgs
-  trajectory_msgs
-  nav_msgs
-  tf2_ros
+  geometry_msgs
   urdf
-  message_filters
-  tracetools_benchmark
-  pointcloud_to_laserscan
+  tf2
 )
+target_compile_definitions(robotperf_quadruped_controller PRIVATE "COMPOSITION_BUILDING_DLL")
 
-
-include_directories(
-  include
-  ${champ_INCLUDE_DIRS}
-  ${champ_INCLUDE_DIRS}/champ/
-  ${champ_INCLUDE_DIRS}/champ/champ/
-)
-
-# LTTng flame chart and graphs
-set(CMAKE_CXX_FLAGS "-g -O2 -finstrument-functions")
-
-# Add quadruped controller library
-add_library(robotperf_quadruped_controller SHARED
-  src/robotperf_quadruped_controller.cpp
-)
-
-ament_target_dependencies(robotperf_quadruped_controller ${dependencies})
-target_include_directories(robotperf_quadruped_controller PUBLIC include)
-
-# Add quadruped controller node
-add_executable(robotperf_quadruped_controller_node
-  src/robotperf_quadruped_controller_node.cpp
-)
-
-ament_target_dependencies(robotperf_quadruped_controller_node ${dependencies})
+########################################
+# robotperf_quadruped_controller_node executable
+ament_auto_add_executable(robotperf_quadruped_controller_node src/robotperf_quadruped_controller_node.cpp)
+ament_target_dependencies(robotperf_quadruped_controller_node rclcpp)
 target_link_libraries(robotperf_quadruped_controller_node robotperf_quadruped_controller)
 
+########################################
 # Install targets
 install(
-  TARGETS 
+  TARGETS
+    twist_input_component
+    joint_trajectory_output_component
     robotperf_quadruped_controller
     robotperf_quadruped_controller_node
-  ARCHIVE DESTINATION lib/${PROJECT_NAME}
-  LIBRARY DESTINATION lib/${PROJECT_NAME}
-  RUNTIME DESTINATION lib/${PROJECT_NAME}  # FIXED INSTALL PATH
+  DESTINATION lib/${PROJECT_NAME}
 )
 
-# Install launch files properly
+# Install launch files
 install(
   DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
 
-# Export include directories
-ament_export_include_directories(include)
-ament_export_dependencies(${dependencies})
+# Install headers
+install(
+  DIRECTORY include/
+  DESTINATION include
+  FILES_MATCHING PATTERN "*.hpp"
+)
 
-# Package
-ament_package()
+ament_auto_package(INSTALL_TO_SHARE launch)

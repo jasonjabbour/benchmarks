@@ -21,7 +21,7 @@ class JointTrajectoryOutputComponent : public rclcpp::Node
 
     private:
         // Member variable for subscriber to the trajectory messages
-        rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_trajectory_sub;
+        rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_trajectory_sub_;
 
         // Member function to get size of message
         size_t get_msg_size(trajectory_msgs::msg::JointTrajectory::ConstSharedPtr joint_trajectory_msg);

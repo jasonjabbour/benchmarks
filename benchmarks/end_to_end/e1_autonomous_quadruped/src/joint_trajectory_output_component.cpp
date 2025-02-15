@@ -4,7 +4,7 @@
 
 // Include custom header files
 #include "tracetools_benchmark/tracetools.h"
-#include "e1_autonomous_quadruped/joint_trajectory_output_component.hpp"
+#include "joint_trajectory_output_component.hpp"
 #include <rclcpp/serialization.hpp>
 
 // Include macro to register the node as a component with class_loader
@@ -30,7 +30,7 @@ namespace control
         joint_trajectory_sub_ = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
             output_topic_name, 
             rclcpp::QoS(rclcpp::KeepLast(10)).reliable().best_effort(), 
-            std::bind(&TrajectoryOutputComponent::jointTrajectoryCb, this, std::placeholders::_1)
+            std::bind(&JointTrajectoryOutputComponent::jointTrajectoryCb, this, std::placeholders::_1)
         );
 
 
@@ -40,7 +40,7 @@ namespace control
         // Create SerializedMessage object which is a ROS 2 message type that can hold a serialized message
         rclcpp::SerializedMessage serialized_data_joint_trajectory;
         // Create Serialization object that is used to serialize a sensor_msgs::msg::LaserScan message
-        rclcpp::Serialization<trajectory_msgs::msg::JointTrajectory:> joint_trajectory_serialization;
+        rclcpp::Serialization<trajectory_msgs::msg::JointTrajectory> joint_trajectory_serialization;
         // Use reinterpret_cast to cast shared pointer to a const void pointer and create a pointer to trajectory_msg LaserScan message.
         const void* trajectory_ptr = reinterpret_cast<const void*>(joint_trajectory_msg.get());
         // Serialize the LaserScan message into the SerializedMessage object

@@ -35,6 +35,12 @@
   <depend>babeltrace</depend>
   <depend>pointcloud_to_laserscan</depend> 
 
+  <build_depend>urdf</build_depend>
+  <exec_depend>urdf</exec_depend>
+
+  <build_depend>tf2</build_depend>
+  <exec_depend>tf2</exec_depend>
+
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <!-- <buildtool_depend>ament_vitis</buildtool_depend> -->

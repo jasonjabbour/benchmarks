@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include "tracetools_benchmark/tracetools.h"
-#include "e1_autonomous_quadruped/twist_input_component.hpp"
+#include "twist_input_component.hpp"
 #include <rclcpp/serialization.hpp>
 
 namespace robotperf
@@ -42,7 +42,7 @@ size_t TwistInputComponent::get_msg_size(geometry_msgs::msg::TwistStamped::Const
 }
 
 
-void PointCloudInputComponent::twistCb(
+void TwistInputComponent::twistCb(
   geometry_msgs::msg::TwistStamped::SharedPtr twist_msg)
 {
   
