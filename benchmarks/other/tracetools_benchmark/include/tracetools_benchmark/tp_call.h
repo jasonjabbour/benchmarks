@@ -340,6 +340,48 @@ TRACEPOINT_EVENT(
   )
 )
 
+// robotperf joint_trajectory_input init callback
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  robotperf_joint_trajectory_input_cb_init,
+  TP_ARGS(
+    const void *, joint_trajectory_input_node_arg,
+    const void *, joint_trajectory_input_msg_arg,
+    uint32_t, joint_trajectory_input_header_nsec_arg,
+    uint32_t, joint_trajectory_input_header_sec_arg,
+    size_t, joint_trajectory_input_msg_size_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, joint_trajectory_input_node, joint_trajectory_input_node_arg)
+    ctf_integer_hex(const void *, joint_trajectory_input_msg, joint_trajectory_input_msg_arg)
+    ctf_integer(uint32_t, joint_trajectory_input_header_nsec, joint_trajectory_input_header_nsec_arg)
+    ctf_integer(uint32_t, joint_trajectory_input_header_sec,  joint_trajectory_input_header_sec_arg)
+    ctf_integer(size_t, joint_trajectory_input_msg_size, joint_trajectory_input_msg_size_arg)
+    ctf_string(version, tracetools_benchmark_VERSION)
+  )
+)
+
+// robotperf joint_trajectory_input end of callback
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  robotperf_joint_trajectory_input_cb_fini,
+  TP_ARGS(
+    const void *, joint_trajectory_input_node_arg,
+    const void *, joint_trajectory_input_msg_arg,
+    uint32_t, joint_trajectory_input_header_nsec_arg,
+    uint32_t, joint_trajectory_input_header_sec_arg,
+    size_t, joint_trajectory_input_msg_size_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, joint_trajectory_input_node, joint_trajectory_input_node_arg)
+    ctf_integer_hex(const void *, joint_trajectory_input_msg, joint_trajectory_input_msg_arg)
+    ctf_integer(uint32_t, joint_trajectory_input_header_nsec, joint_trajectory_input_header_nsec_arg)
+    ctf_integer(uint32_t, joint_trajectory_input_header_sec,  joint_trajectory_input_header_sec_arg)
+    ctf_integer(size_t, joint_trajectory_input_msg_size, joint_trajectory_input_msg_size_arg)
+    ctf_string(version, tracetools_benchmark_VERSION)
+  )
+)
+
 // robotperf twist_input init callback
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,

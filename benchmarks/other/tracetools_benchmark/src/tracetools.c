@@ -311,6 +311,44 @@ void TRACEPOINT(
     joint_trajectory_output_msg_size_arg);
 }
 
+// joint_trajectory_input
+void TRACEPOINT(
+  robotperf_joint_trajectory_input_cb_init,
+  const void * joint_trajectory_input_node_arg,
+  const void * joint_trajectory_input_msg_arg,
+  uint32_t joint_trajectory_input_header_nsec_arg,
+  uint32_t joint_trajectory_input_header_sec_arg,
+  size_t joint_trajectory_input_msg_size_arg)
+{
+  CONDITIONAL_TP(
+    robotperf_joint_trajectory_input_cb_init,
+    joint_trajectory_input_node_arg,
+    joint_trajectory_input_msg_arg,
+    joint_trajectory_input_header_nsec_arg,
+    joint_trajectory_input_header_sec_arg,
+    joint_trajectory_input_msg_size_arg
+  );
+}
+
+void TRACEPOINT(
+  robotperf_joint_trajectory_input_cb_fini,
+  const void * joint_trajectory_input_node_arg,
+  const void * joint_trajectory_input_msg_arg,
+  uint32_t joint_trajectory_input_header_nsec_arg,
+  uint32_t joint_trajectory_input_header_sec_arg,
+  size_t joint_trajectory_input_msg_size_arg)
+{
+  CONDITIONAL_TP(
+    robotperf_joint_trajectory_input_cb_fini,
+    joint_trajectory_input_node_arg,
+    joint_trajectory_input_msg_arg,
+    joint_trajectory_input_header_nsec_arg,
+    joint_trajectory_input_header_sec_arg,
+    joint_trajectory_input_msg_size_arg
+  );
+}
+
+
 // twist_input
 void TRACEPOINT(
   robotperf_twist_input_cb_init,

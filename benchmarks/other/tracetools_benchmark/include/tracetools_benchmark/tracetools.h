@@ -371,6 +371,39 @@ DECLARE_TRACEPOINT(
   uint32_t joint_trajectory_output_header_sec_arg,
   size_t joint_trajectory_output_msg_size)
 
+/// `robotperf_joint_trajectory_input_cb_init`
+/**
+ * Tracepoint while initiating the callback of
+ * robotperf::control::JointTrajectoryInputComponent component.
+ *
+ * \param[in] joint_trajectory_input_node pointer to node
+ * \param[in] joint_trajectory_input_msg pointer to the input JointTrajectory message
+ * \param[in] joint_trajectory_input_header_nsec_arg header.stamp.nanosec
+ * \param[in] joint_trajectory_input_header_sec_arg header.stamp.sec
+ * \param[in] joint_trajectory_input_msg_size size in bytes
+ */
+DECLARE_TRACEPOINT(
+  robotperf_joint_trajectory_input_cb_init,
+  const void * joint_trajectory_input_node,
+  const void * joint_trajectory_input_msg,
+  uint32_t joint_trajectory_input_header_nsec_arg,
+  uint32_t joint_trajectory_input_header_sec_arg,
+  size_t joint_trajectory_input_msg_size
+);
+
+/// `robotperf_joint_trajectory_input_cb_fini`
+/**
+ * Tracepoint while finishing the callback of
+ * robotperf::control::JointTrajectoryInputComponent component.
+ */
+DECLARE_TRACEPOINT(
+  robotperf_joint_trajectory_input_cb_fini,
+  const void * joint_trajectory_input_node,
+  const void * joint_trajectory_input_msg,
+  uint32_t joint_trajectory_input_header_nsec_arg,
+  uint32_t joint_trajectory_input_header_sec_arg,
+  size_t joint_trajectory_input_msg_size
+);
 
 /// `robotperf_twist_input_cb_init`
 /**
