@@ -26,6 +26,7 @@ package = 'end_to_end_perception' #os.environ.get('PACKAGE') # Example: 'a6_dept
 type = 'grey' #os.environ.get('TYPE') # Example: 'grey'
 metric = 'latency' #os.environ.get('METRIC') # Example: 'latency'
 
+RUN_WITH_END2END = True # expects an end2end graph to run alongside this
 POWER_LIB = os.environ.get('POWER_LIB')
 IMAGE_RESOLUTION = ImageResolution.HD
 ROSBAG_PATH = '/tmp/benchmark_ws/src/rosbags/' + rosbag # '/home/amf/benchmark_ws/src/rosbags/perception/image3' # NOTE: hardcoded, modify accordingly
@@ -117,21 +118,22 @@ def launch_setup(container_prefix, container_sigterm_timeout):
         description="Publish foot contacts",
     )
 
+
+
     data_loader_node = ComposableNode(
         name='DataLoaderNode',
-        namespace=TestEnd2EndPerception.generate_namespace(),
+        namespace=TestEnd2EndControl.generate_namespace(),
         package='ros2_benchmark',
         plugin='ros2_benchmark::DataLoaderNode',
         remappings=[('cmd_vel_stamped', 'data_loader/cmd_vel'),
                     ]                    
     )
 
-
     if OPTION == 'with_monitor_node':
         # Publish input messages by using the messages stored in the buffer
         playback_node = ComposableNode(
             name='PlaybackNode',
-            namespace=TestEnd2EndPerception.generate_namespace(),
+            namespace=TestEnd2EndControl.generate_namespace(),
             package='ros2_benchmark',
             plugin='ros2_benchmark::PlaybackNode',
             parameters=[{
@@ -149,7 +151,7 @@ def launch_setup(container_prefix, container_sigterm_timeout):
                 # Publish input messages by using the messages stored in the buffer
         playback_node = ComposableNode(
             name='PlaybackNode',
-            namespace=TestEnd2EndPerception.generate_namespace(),
+            namespace=TestEnd2EndControl.generate_namespace(),
             package='ros2_benchmark',
             plugin='ros2_benchmark::PlaybackNode',
             parameters=[{
@@ -203,22 +205,22 @@ def launch_setup(container_prefix, container_sigterm_timeout):
 
     # Record Final Tracepoint once trajectory message is produced
     trajectory_output_node = ComposableNode(
-        namespace="robotperf",
+        namespace='robotperf/output',
         package="e1_autonomous_quadruped",
         plugin="robotperf::control::JointTrajectoryOutputComponent",
         name="joint_trajectory_output_component",
         parameters=[
-            {'output_topic_name': '/robotperf/benchmark/joint_trajectory'},
+            {'output_topic_name': '/robotperf/benchmark/joint_group_effort_controller/joint_trajectory'},
         ],
         remappings=[
-            ('joint_trajectory', '/robotperf/benchmark/joint_trajectory'),
+            ('joint_trajectory', '/robotperf/benchmark/joint_group_effort_controller/joint_trajectory'),
         ],
         # extra_arguments=[{'use_intra_process_comms': True}],
     )
 
     monitor_node = ComposableNode(
         name='MonitorNode',
-        namespace=TestEnd2EndPerception.generate_namespace(),
+        namespace=TestEnd2EndControl.generate_namespace(),
         package='ros2_benchmark',
         plugin='ros2_benchmark::MonitorNode',
         parameters=[{
@@ -230,7 +232,6 @@ def launch_setup(container_prefix, container_sigterm_timeout):
         remappings=[
             ('output', '/robotperf/benchmark/joint_group_effort_controller/joint_trajectory')],
     )
-
 
     if OPTION == 'with_monitor_node':
         composable_node_descriptions_option=[
@@ -248,7 +249,7 @@ def launch_setup(container_prefix, container_sigterm_timeout):
 
     composable_node_container = ComposableNodeContainer(
         name='container',
-        namespace=TestEnd2EndPerception.generate_namespace(),
+        namespace=TestEnd2EndControl.generate_namespace(),
         package='rclcpp_components',
         executable='component_container_mt',
         prefix=container_prefix,
@@ -306,7 +307,7 @@ def launch_setup(container_prefix, container_sigterm_timeout):
                 quadruped_controller_node]
 
 
-class TestEnd2EndPerception(ROS2BenchmarkTest):
+class TestEnd2EndControl(ROS2BenchmarkTest):
     """Performance test for depthimage_to_laserscan DepthImageToLaserScanROS."""
 
     # Custom configurations
@@ -335,6 +336,7 @@ class TestEnd2EndPerception(ROS2BenchmarkTest):
     )
     
     def test_benchmark(self):
+
         json_file_path = self.run_benchmark()
 
         # Copy the JSON file to the "/tmp/json" file
@@ -364,6 +366,6 @@ class TestEnd2EndPerception(ROS2BenchmarkTest):
                 str_out += "| ros2_benchmark | **{}** ms | **{}** ms | **{}** ms | **{}** ms | {} % |\n".format(
                     mean_latency, rms_latency, max_latency, min_latency, (frames_missed/frames_sent)*100)
             print(str_out)
-     
+    
 def generate_test_description():
-    return TestEnd2EndPerception.generate_test_description_with_nsys(launch_setup)
+    return TestEnd2EndControl.generate_test_description_with_nsys(launch_setup)

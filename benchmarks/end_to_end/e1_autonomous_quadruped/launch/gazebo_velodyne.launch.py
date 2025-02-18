@@ -74,7 +74,7 @@ def generate_launch_description():
     bringup_ld = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                get_package_share_directory("champ_bringup"),
+                get_package_share_directory("e1_autonomous_quadruped"), # Modified, so we can cusotmize this
                 "launch",
                 "bringup.launch.py",
             )

@@ -35,14 +35,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <champ_msgs/msg/point_array.hpp>
 #include <champ_msgs/msg/contacts_stamped.hpp>
 
-// RobotPerf
-#include <geometry_msgs/msg/twist_stamped.hpp>
-
 #include <champ/body_controller/body_controller.h>
 #include <champ/utils/urdf_loader.h>
 #include <champ/leg_controller/leg_controller.h>
 #include <champ/kinematics/kinematics.h>
 
+#include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include "tf2/transform_datatypes.h"
@@ -57,7 +55,7 @@ class QuadrupedController: public rclcpp::Node
 {
     // rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_subscription_;
     // RobotPerf: You need Stamped messages
-    rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_subscription_;
+    rclcpp::SubscriptionBase::SharedPtr cmd_vel_subscription_;
     rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr cmd_pose_subscription_;
 
     rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_commands_publisher_;
@@ -69,7 +67,6 @@ class QuadrupedController: public rclcpp::Node
 
     // RobotPerf: Store the key
     rclcpp::Time last_inbound_key_;
-
     
     champ::Velocities req_vel_;
     champ::Pose req_pose_;
@@ -88,14 +85,16 @@ class QuadrupedController: public rclcpp::Node
     bool publish_joint_control_;
     bool in_gazebo_;
 
+    std::string twist_type_;
+    std::string control_mode_;
+
     void controlLoop_();
     
     void publishJoints_(float target_joints[12]);
     void publishFootContacts_(bool foot_contacts[4]);
 
-    // void cmdVelCallback_(const geometry_msgs::msg::Twist::SharedPtr msg);
-    // RobotPerf
-    void cmdVelCallback_(const geometry_msgs::msg::TwistStamped::SharedPtr msg);
+    template <typename TwistMsgType>
+    void cmdVelCallback_(const typename TwistMsgType::SharedPtr msg);
 
     void cmdPoseCallback_(const geometry_msgs::msg::Pose::SharedPtr msg);
 

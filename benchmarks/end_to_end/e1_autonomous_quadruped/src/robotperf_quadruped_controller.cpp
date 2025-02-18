@@ -48,10 +48,9 @@ QuadrupedController::QuadrupedController():
     std::string urdf = "";
 
     double loop_rate =  200.0;
-    // UPDATED
-    // double loop_rate =  15.0;
 
-
+    this->get_parameter("twist_type", twist_type_); 
+    this->get_parameter("control_mode", control_mode_); //event_based or frequency_based
     this->get_parameter("gait.pantograph_leg",         gait_config_.pantograph_leg);
     this->get_parameter("gait.max_linear_velocity_x",  gait_config_.max_linear_velocity_x);
     this->get_parameter("gait.max_linear_velocity_y",  gait_config_.max_linear_velocity_y);
@@ -67,15 +66,19 @@ QuadrupedController::QuadrupedController():
     this->get_parameter("publish_joint_control",       publish_joint_control_);
     this->get_parameter("gazebo",                      in_gazebo_);
     this->get_parameter("joint_controller_topic",      joint_control_topic);
-    // this->get_parameter("loop_rate",                   loop_rate);
+    this->get_parameter("loop_rate",                   loop_rate);
     this->get_parameter("urdf",                        urdf);
     
-    // cmd_vel_subscription_ = this->create_subscription<geometry_msgs::msg::Twist>(
-    //     "cmd_vel/smooth", 10, std::bind(&QuadrupedController::cmdVelCallback_, this,  std::placeholders::_1));
-    // RobotPerf:
-    cmd_vel_subscription_ = this->create_subscription<geometry_msgs::msg::TwistStamped>(
-        "cmd_vel/smooth", 10, std::bind(&QuadrupedController::cmdVelCallback_, this, std::placeholders::_1));
-    
+
+    // Choose the correct subscriber type
+    if (twist_type_ == "TwistStamped") {
+        cmd_vel_subscription_ = this->create_subscription<geometry_msgs::msg::TwistStamped>(
+            "cmd_vel/smooth", 10, std::bind(&QuadrupedController::cmdVelCallback_<geometry_msgs::msg::TwistStamped>, this, std::placeholders::_1));
+    } else {
+        cmd_vel_subscription_ = this->create_subscription<geometry_msgs::msg::Twist>(
+            "cmd_vel/smooth", 10, std::bind(&QuadrupedController::cmdVelCallback_<geometry_msgs::msg::Twist>, this, std::placeholders::_1));
+    }
+
     cmd_pose_subscription_ = this->create_subscription<geometry_msgs::msg::Pose>(
         "body_pose", 1,  std::bind(&QuadrupedController::cmdPoseCallback_, this,  std::placeholders::_1));
     
@@ -100,12 +103,14 @@ QuadrupedController::QuadrupedController():
     champ::URDF::loadFromString(base_, this->get_node_parameters_interface(), urdf);
     joint_names_ = champ::URDF::getJointNames(this->get_node_parameters_interface());
 
-    // UPDATED
-    // std::chrono::milliseconds period(static_cast<int>(1000/loop_rate));
-
-    // loop_timer_ = this->create_wall_timer(
-    //      std::chrono::duration_cast<std::chrono::milliseconds>(period), std::bind(&QuadrupedController::controlLoop_, this));
-    // //
+    // If frequency-based control is selected, set up a loop timer
+    if (control_mode_ == "frequency_based") {
+        std::chrono::milliseconds period(static_cast<int>(1000 / loop_rate));
+        loop_timer_ = this->create_wall_timer(
+            std::chrono::duration_cast<std::chrono::milliseconds>(period),
+            std::bind(&QuadrupedController::controlLoop_, this)
+        );
+    }
 
     req_pose_.position.z = gait_config_.nominal_height;
 }
@@ -125,24 +130,27 @@ void QuadrupedController::controlLoop_()
     publishJoints_(target_joint_positions);
 }
 
-// void QuadrupedController::cmdVelCallback_(const geometry_msgs::msg::Twist::SharedPtr msg)
-// RobotPerf:
-void QuadrupedController::cmdVelCallback_(const geometry_msgs::msg::TwistStamped::SharedPtr msg)
+// Template-based callback to handle both Twist and TwistStamped
+template <typename TwistMsgType>
+void QuadrupedController::cmdVelCallback_(const typename TwistMsgType::SharedPtr msg)
 {
-    // Save the inbound stamp so we can preserve the "fake key" from PlaybackNode
-    last_inbound_key_ = msg->header.stamp;
+    if constexpr (std::is_same_v<TwistMsgType, geometry_msgs::msg::TwistStamped>) {
+        // Save the inbound stamp so we can preserve the "fake key" from PlaybackNode
+        last_inbound_key_ = msg->header.stamp;
 
-    // RobotPerf
-    // req_vel_.linear.x = msg->linear.x;
-    // req_vel_.linear.y = msg->linear.y;
-    // req_vel_.angular.z = msg->angular.z;
-    req_vel_.linear.x = msg->twist.linear.x;
-    req_vel_.linear.y = msg->twist.linear.y;
-    req_vel_.angular.z = msg->twist.angular.z;
+        req_vel_.linear.x = msg->twist.linear.x;
+        req_vel_.linear.y = msg->twist.linear.y;
+        req_vel_.angular.z = msg->twist.angular.z;
+    } else {
+        req_vel_.linear.x = msg->linear.x;
+        req_vel_.linear.y = msg->linear.y;
+        req_vel_.angular.z = msg->angular.z;
+    }
 
-    // UPDATED
-    // Execute the control logic and publish immediately
-    controlLoop_();
+    // Run control loop immediately if event-based mode is selected
+    if (control_mode_ == "event_based") {
+        controlLoop_();
+    }
 }
 
 void QuadrupedController::cmdPoseCallback_(const geometry_msgs::msg::Pose::SharedPtr msg)
@@ -166,9 +174,10 @@ void QuadrupedController::cmdPoseCallback_(const geometry_msgs::msg::Pose::Share
     req_pose_.position.y = msg->position.y;
     req_pose_.position.z = msg->position.z +  gait_config_.nominal_height;
 
-    // UPDATED
     // Execute the control logic and publish immediately
-    controlLoop_();
+    if (control_mode_ == "event_based") {
+        controlLoop_();
+    }
 }
 
 void QuadrupedController::publishJoints_(float target_joints[12])
@@ -183,7 +192,7 @@ void QuadrupedController::publishJoints_(float target_joints[12])
 
 
         // RobotPerf: Use the inbound stamp so the "fake key" stays intact:
-        joints_cmd_msg.header.stamp = last_inbound_key_;
+        // joints_cmd_msg.header.stamp = last_inbound_key_;
 
         // RobotPerf: No overwriting
         // joints_cmd_msg.header.stamp = clock_.now();
