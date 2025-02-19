@@ -65,6 +65,21 @@ rclcpp_components_register_nodes(joint_trajectory_input_component
 )
 
 ########################################
+# pointcloud_input_component library
+ament_auto_add_library(pointcloud_input_component SHARED src/pointcloud_input_component.cpp)
+ament_target_dependencies(pointcloud_input_component tracetools_benchmark rclcpp sensor_msgs)
+target_compile_definitions(pointcloud_input_component PRIVATE "COMPOSITION_BUILDING_DLL")
+rclcpp_components_register_nodes(pointcloud_input_component "robotperf::perception::PointCloudInputComponent")
+
+########################################
+# laserscan_output_component library
+ament_auto_add_library(laserscan_output_component SHARED src/laserscan_output_component.cpp)
+ament_target_dependencies(laserscan_output_component tracetools_benchmark rclcpp sensor_msgs)
+target_compile_definitions(laserscan_output_component PRIVATE "COMPOSITION_BUILDING_DLL")
+rclcpp_components_register_nodes(laserscan_output_component "robotperf::perception::LaserscanOutputComponent")
+
+
+########################################
 # robotperf_quadruped_controller library
 ament_auto_add_library(robotperf_quadruped_controller SHARED src/robotperf_quadruped_controller.cpp)
 ament_target_dependencies(robotperf_quadruped_controller
@@ -91,6 +106,8 @@ install(
     twist_input_component
     joint_trajectory_output_component
     joint_trajectory_input_component
+    pointcloud_input_component
+    laserscan_output_component
     robotperf_quadruped_controller
     robotperf_quadruped_controller_node
   DESTINATION lib/${PROJECT_NAME}
