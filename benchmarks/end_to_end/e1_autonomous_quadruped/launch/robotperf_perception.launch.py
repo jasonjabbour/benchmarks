@@ -10,7 +10,7 @@ from ros2_benchmark import ROS2BenchmarkConfig, ROS2BenchmarkTest
 # These are provided as environment variables for CI, you can manually hardcord them for other uses
 rosbag = 'end_to_end/rosbag2_end_to_end_1m' #os.environ.get('ROSBAG') # Example: 'perception/r2b_cafe'
 package = 'end_to_end_perception' #os.environ.get('PACKAGE') # Example: 'a6_depthimage_to_laserscan'
-type = 'black' #os.environ.get('TYPE') # Example: 'grey'
+type = 'grey' #os.environ.get('TYPE') # Example: 'grey'
 metric = 'latency' #os.environ.get('METRIC') # Example: 'latency'
 
 POWER_LIB = os.environ.get('POWER_LIB')
@@ -51,9 +51,26 @@ def launch_setup(container_prefix, container_sigterm_timeout):
             'qos': {'reliability': 'best_effort', 'durability': 'transient_local'},
         }],
         remappings=[('buffer/input0', 'data_loader/velodyne_points'), #subbing to
-                    ('input0', 'benchmark/velodyne_points'), #publishing to
+                    ('input0', '/robotperf/velodyne_points'), #publishing to
                     ],                   
     )
+
+
+    # Place Input Tracepoint
+    pointcloud_input_node = ComposableNode(
+                namespace="robotperf/input",
+                package="e1_autonomous_quadruped",
+                plugin="robotperf::perception::PointCloudInputComponent",
+                name="pointcloud_input_component",
+                parameters=[
+                    {"input_topic_name":"/robotperf/benchmark/velodyne_points"}
+                ],
+                remappings=[
+                    ("cloud", "/robotperf/velodyne_points"),
+                ], 
+                # extra_arguments=[{'use_intra_process_comms': True}],
+    )
+
 
     # Convert PointCloud to Laserscan (node of interest)
     laserscan_node = ComposableNode(
@@ -70,7 +87,17 @@ def launch_setup(container_prefix, container_sigterm_timeout):
             ]
     )
 
-
+    # Record Final Tracepoint once scan is produced
+    laserscan_output_node = ComposableNode(
+                namespace="robotperf/output",
+                package='a6_depthimage_to_laserscan', 
+                plugin='robotperf::perception::LaserscanOutputComponent', 
+                name='laserscan_output_component',
+                parameters=[
+                    {'output_topic_name': '/robotperf/benchmark/scan'}
+                ],
+                # extra_arguments=[{'use_intra_process_comms': True}],
+    )
 
     monitor_node = ComposableNode(
         name='MonitorNode',
@@ -99,7 +126,9 @@ def launch_setup(container_prefix, container_sigterm_timeout):
         composable_node_descriptions_option=[
             data_loader_node,
             playback_node,
-
+            pointcloud_input_node,
+            laserscan_node,
+            laserscan_output_node
         ]
 
     composable_node_container = ComposableNodeContainer(
@@ -140,7 +169,6 @@ def launch_setup(container_prefix, container_sigterm_timeout):
 
 
 class TestEnd2EndPerception(ROS2BenchmarkTest):
-    """Performance test for depthimage_to_laserscan DepthImageToLaserScanROS."""
 
     # Custom configurations
     config = ROS2BenchmarkConfig(
