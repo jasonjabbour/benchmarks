@@ -4006,7 +4006,7 @@ class BenchmarkAnalyzer:
         outs, err = run('cd /tmp/benchmarks && git log -1', shell=True)
         print(outs)
 
-    def analyze_latency(self, tracepath=None, add_power=False, debug=True):
+    def analyze_latency(self, tracepath=None, add_power=False, debug=True, filter_type='ID'):
         """Analyze latency of the image pipeline
 
         Args:
@@ -4022,7 +4022,7 @@ class BenchmarkAnalyzer:
             power_consumption = None
         
         if not hasattr(self, 'trace_sets_filter_type'):
-            self.set_trace_sets_filter_type()
+            self.set_trace_sets_filter_type(filter_type=filter_type)
 
         self.get_target_chain_traces(tracepath, debug)      
         self.bar_charts_latency()
@@ -4050,7 +4050,7 @@ class BenchmarkAnalyzer:
         #     # self.upload_results()  # performed in CI/CD pipelines instead
 
 
-    def analyze_throughput(self, tracepath=None, add_power=False, debug=True):
+    def analyze_throughput(self, tracepath=None, add_power=False, debug=True, filter_type='ID'):
         """Analyze throughput of the image pipeline
 
         Args:
@@ -4065,7 +4065,7 @@ class BenchmarkAnalyzer:
             power_consumption = None
 
         if not hasattr(self, 'trace_sets_filter_type'):
-            self.set_trace_sets_filter_type()
+            self.set_trace_sets_filter_type(filter_type=filter_type)
         
         self.get_target_chain_traces(tracepath, debug)        
         barcharts_through_megabys_pot, barcharts_through_fps_pot = self.barchart_data_throughput(self.image_pipeline_msg_sets, 'potential')
