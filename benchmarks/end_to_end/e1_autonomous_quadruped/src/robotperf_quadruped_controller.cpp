@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <robotperf_quadruped_controller.h>
+#include "tracetools_benchmark/tracetools.h"
 
 
 champ::PhaseGenerator::Time rosTimeToChampTime(const rclcpp::Time& time)
@@ -147,6 +148,13 @@ void QuadrupedController::cmdVelCallback_(const typename TwistMsgType::SharedPtr
         req_vel_.angular.z = msg->angular.z;
     }
 
+    // To Calculate Network Latency
+    TRACEPOINT(
+        robotperf_msg_received_1,
+        static_cast<const void *>(this),
+        static_cast<const void *>(msg.get()), 
+        0);
+
     // Run control loop immediately if event-based mode is selected
     if (control_mode_ == "event_based") {
         controlLoop_();
@@ -211,6 +219,15 @@ void QuadrupedController::publishJoints_(float target_joints[12])
         }
 
         joints_cmd_msg.points.push_back(point);
+
+
+        // To Calculate Network Latency
+        TRACEPOINT(
+            robotperf_msg_published_1,
+            static_cast<const void *>(this),
+            static_cast<const void *>(&joints_cmd_msg), 
+            0);     
+
         joint_commands_publisher_->publish(joints_cmd_msg);
     }
 
