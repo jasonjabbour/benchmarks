@@ -24,6 +24,8 @@ protected:
 
   void pointCloudCb(const sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg);
 
+  uint32_t generate_unique_key();
+
 };
 
 }  // namespace perception

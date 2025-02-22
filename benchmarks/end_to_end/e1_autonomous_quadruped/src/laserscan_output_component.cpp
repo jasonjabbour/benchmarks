@@ -56,13 +56,17 @@ namespace perception
     void LaserscanOutputComponent::laserscanCb(
         const sensor_msgs::msg::LaserScan::SharedPtr scan_msg)
     {
+        uint64_t unique_key = std::stoull(scan_msg->header.frame_id); // Retrieve key
+
         TRACEPOINT(
             robotperf_laserscan_output_cb_init,
             static_cast<const void *>(this),
             static_cast<const void *>(&(*scan_msg)),
             scan_msg->header.stamp.nanosec,
             scan_msg->header.stamp.sec,
-            get_msg_size(scan_msg));
+            get_msg_size(scan_msg),
+            unique_key);
+
 
         TRACEPOINT(
             robotperf_laserscan_output_cb_fini,    
@@ -70,8 +74,8 @@ namespace perception
             static_cast<const void *>(&(*scan_msg)),
             scan_msg->header.stamp.nanosec,
             scan_msg->header.stamp.sec,
-            get_msg_size(scan_msg));
-
+            get_msg_size(scan_msg),
+            unique_key);
     }
 } // namespace perception
 

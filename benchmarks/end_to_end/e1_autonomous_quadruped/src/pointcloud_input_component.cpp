@@ -41,18 +41,31 @@ size_t PointCloudInputComponent::get_msg_size(sensor_msgs::msg::PointCloud2::Con
   return cloud_msg_size;
 }
 
+uint32_t robotperf::perception::PointCloudInputComponent::generate_unique_key()
+{
+    static uint32_t counter = 1;  // Start from 1 (avoid zero confusion)
+    uint32_t new_key = counter++;    
+    return new_key;
+}
+
 
 void PointCloudInputComponent::pointCloudCb(
   sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg)
 {
-  
+
+  uint32_t unique_key = generate_unique_key();  // Generate a unique key
+
+  // Store the key in the nanosec part of the header
+  cloud_msg->header.stamp.nanosec = unique_key;
+
   TRACEPOINT(
     robotperf_pointcloud_input_cb_init,
     static_cast<const void *>(this),
     static_cast<const void *>(&(*cloud_msg)),
     cloud_msg->header.stamp.nanosec,
     cloud_msg->header.stamp.sec,
-    get_msg_size(cloud_msg));
+    get_msg_size(cloud_msg),
+    unique_key);  // Include the unique key in tracepoints
 
   if (pub_pointcloud_->get_subscription_count() < 1) {
     return;
@@ -66,7 +79,8 @@ void PointCloudInputComponent::pointCloudCb(
     static_cast<const void *>(&(*cloud_msg)),
     cloud_msg->header.stamp.nanosec,
     cloud_msg->header.stamp.sec,
-    get_msg_size(cloud_msg));
+    get_msg_size(cloud_msg),
+    unique_key);
 }
 
 }  // namespace perception
