@@ -46,13 +46,16 @@ void PointCloudInputComponent::pointCloudCb(
   sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg)
 {
   
+  uint64_t dummy_key = 0;  // Dummy key value
+
   TRACEPOINT(
     robotperf_pointcloud_input_cb_init,
     static_cast<const void *>(this),
     static_cast<const void *>(&(*cloud_msg)),
     cloud_msg->header.stamp.nanosec,
     cloud_msg->header.stamp.sec,
-    get_msg_size(cloud_msg));
+    get_msg_size(cloud_msg), 
+    dummy_key);
 
   if (pub_pointcloud_->get_subscription_count() < 1) {
     return;
@@ -66,7 +69,8 @@ void PointCloudInputComponent::pointCloudCb(
     static_cast<const void *>(&(*cloud_msg)),
     cloud_msg->header.stamp.nanosec,
     cloud_msg->header.stamp.sec,
-    get_msg_size(cloud_msg));
+    get_msg_size(cloud_msg), 
+    dummy_key);
 }
 
 }  // namespace perception

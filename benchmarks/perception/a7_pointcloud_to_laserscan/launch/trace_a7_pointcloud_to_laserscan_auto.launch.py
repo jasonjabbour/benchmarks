@@ -244,5 +244,6 @@ class TestPointCloudToLaserScanNode(ROS2BenchmarkTest):
                     mean_latency, rms_latency, max_latency, min_latency, (frames_missed/frames_sent)*100)
             print(str_out)
      
-def generate_test_description():
+# def generate_test_description():
+def generate_launch_description():
     return TestPointCloudToLaserScanNode.generate_test_description_with_nsys(launch_setup)

@@ -33,10 +33,10 @@ from ros2_benchmark import ImageResolution
 from ros2_benchmark import ROS2BenchmarkConfig, ROS2BenchmarkTest
 
 # These are provided as environment variables for CI, you can manually hardcord them for other uses
-rosbag = os.environ.get('ROSBAG')
-package = os.environ.get('PACKAGE')
-type = os.environ.get('TYPE')
-metric = os.environ.get('METRIC')
+rosbag = 'perception/r2b_hallway'  #os.environ.get('ROSBAG')
+package = 'a4_depth_image_proc' #os.environ.get('PACKAGE')
+type = 'black' #os.environ.get('TYPE')
+metric = 'latency' #os.environ.get('METRIC')
 
 POWER_LIB = os.environ.get('POWER_LIB')
 IMAGE_RESOLUTION = ImageResolution.HD
@@ -61,10 +61,14 @@ def launch_setup(container_prefix, container_sigterm_timeout):
         plugin='ros2_benchmark::DataLoaderNode',
         # remappings=[('hawk_0_left_rgb_image', 'data_loader/image'),
         #             ('hawk_0_left_rgb_camera_info', 'data_loader/camera_info')]
-        remappings=[('camera/image_raw', 'data_loader/image'),
-                    ('camera/camera_info', 'data_loader/camera_info'),
-                    ('camera/depth/image_raw', 'data_loader/depth/image'),
-                    ('camera/depth/camera_info', 'data_loader/depth/camera_info')]                   
+        # remappings=[('camera/image_raw', 'data_loader/image'),
+        #             ('camera/camera_info', 'data_loader/camera_info'),
+        #             ('camera/depth/image_raw', 'data_loader/depth/image'),
+        #             ('camera/depth/camera_info', 'data_loader/depth/camera_info')]
+        remappings=[('d455_1_rgb_image', 'data_loader/image'),
+                    ('d455_1_rgb_camera_info', 'data_loader/camera_info'),
+                    ('d455_1_depth_image', 'data_loader/depth/image'),
+                    ('d455_1_depth_camera_info', 'data_loader/depth/camera_info')]                     
     )
 
     playback_node = ComposableNode(
@@ -177,7 +181,7 @@ def launch_setup(container_prefix, container_sigterm_timeout):
         parameters=[{
             'monitor_data_format': 'sensor_msgs/msg/PointCloud2',
             'qos_type': 'sensor',
-            'monitor_power_data_format': 'power_msgs/msg/Power',
+            # 'monitor_power_data_format': 'power_msgs/msg/Power',
         }],
         remappings=[
             ('output', '/robotperf/benchmark/points')],

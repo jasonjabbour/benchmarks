@@ -42,13 +42,17 @@ size_t PointCloudOutputComponent::get_msg_size(sensor_msgs::msg::PointCloud2::Co
 void PointCloudOutputComponent::pointcloudCb(
   const sensor_msgs::msg::PointCloud2::SharedPtr point_cloud_msg)
 {
+
+  uint64_t dummy_key = 0;  // Dummy key value
+
   TRACEPOINT(
     robotperf_pointcloud_output_cb_init,
     static_cast<const void *>(this),
     static_cast<const void *>(&(*point_cloud_msg)),
     point_cloud_msg->header.stamp.nanosec,
     point_cloud_msg->header.stamp.sec,
-    get_msg_size(point_cloud_msg));
+    get_msg_size(point_cloud_msg), 
+    dummy_key);
 
   TRACEPOINT(
     robotperf_pointcloud_output_cb_fini,
@@ -56,7 +60,8 @@ void PointCloudOutputComponent::pointcloudCb(
     static_cast<const void *>(&(*point_cloud_msg)),
     point_cloud_msg->header.stamp.nanosec,
     point_cloud_msg->header.stamp.sec,
-    get_msg_size(point_cloud_msg));
+    get_msg_size(point_cloud_msg), 
+    dummy_key);
 
 }
 
