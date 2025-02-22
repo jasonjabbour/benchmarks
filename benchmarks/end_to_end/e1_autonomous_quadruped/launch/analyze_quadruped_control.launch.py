@@ -34,10 +34,12 @@ def main(argv):
         # add parameters for analyzing the traces
         ## using message header id
         target_chain = [
-            "robotperf_benchmarks:robotperf_twist_input_cb_init",  # 0
-            "robotperf_benchmarks:robotperf_twist_input_cb_fini",     # 1
-            "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_init",     # 2
-            "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_fini"   # 3
+            "robotperf_benchmarks:robotperf_twist_input_cb_init",
+            "robotperf_benchmarks:robotperf_twist_input_cb_fini",
+            "robotperf_benchmarks:robotperf_msg_received_1", 
+            "robotperf_benchmarks:robotperf_msg_published_1",
+            "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_init",
+            "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_fini"
         ]
 
         ba.add_target(
@@ -62,10 +64,63 @@ def main(argv):
                 "marker": "plus",
             }
         )
+
+        #  -----
         ba.add_target(
             {
-                "name": "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_init",
-                "name_disambiguous": "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_init",
+                "name": "robotperf_benchmarks:robotperf_msg_received_1",
+                "name_disambiguous": "robotperf_benchmarks:robotperf_msg_received_1",
+                "colors_fg": "red",
+                "colors_fg_bokeh": "lightcoral",
+                "layer": "userland",
+                "label_layer": 4,
+                "marker": "plus",
+            }
+        )
+
+        ba.add_target(
+            {
+                "name": "robotperf_benchmarks:robotperf_msg_published_1",
+                "name_disambiguous": "robotperf_benchmarks:robotperf_msg_published_1",
+                "colors_fg": "red",
+                "colors_fg_bokeh": "lightcoral",
+                "layer": "userland",
+                "label_layer": 4,
+                "marker": "plus",
+            }
+        )
+        # ----
+
+
+        # ba.add_target(
+        #     {
+        #         "name": "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_init",
+        #         "name_disambiguous": "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_init",
+        #         "colors_fg": "red",
+        #         "colors_fg_bokeh": "lightcoral",
+        #         "layer": "userland",
+        #         "label_layer": 4,
+        #         "marker": "plus",
+        #     }
+        # )
+
+
+        # ba.add_target(
+        #     {
+        #         "name": "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_fini",
+        #         "name_disambiguous": "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_fini",
+        #         "colors_fg": "yellow",
+        #         "colors_fg_bokeh": "darkred",
+        #         "layer": "userland",
+        #         "label_layer": 4,
+        #         "marker": "plus",
+        #     }
+        # )
+
+        ba.add_target(
+            {
+                "name": "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_init",
+                "name_disambiguous": "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_init",
                 "colors_fg": "red",
                 "colors_fg_bokeh": "lightcoral",
                 "layer": "userland",
@@ -75,8 +130,8 @@ def main(argv):
         )
         ba.add_target(
             {
-                "name": "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_fini",
-                "name_disambiguous": "robotperf_benchmarks:robotperf_joint_trajectory_output_cb_fini",
+                "name": "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_fini",
+                "name_disambiguous": "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_fini",
                 "colors_fg": "yellow",
                 "colors_fg_bokeh": "darkred",
                 "layer": "userland",
@@ -84,29 +139,6 @@ def main(argv):
                 "marker": "plus",
             }
         )
-
-        # ba.add_target(
-        #     {
-        #         "name": "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_init",
-        #         "name_disambiguous": "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_init",
-        #         "colors_fg": "red",
-        #         "colors_fg_bokeh": "lightcoral",
-        #         "layer": "userland",
-        #         "label_layer": 4,
-        #         "marker": "plus",
-        #     }
-        # )
-        # ba.add_target(
-        #     {
-        #         "name": "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_fini",
-        #         "name_disambiguous": "robotperf_benchmarks:robotperf_joint_trajectory_input_cb_fini",
-        #         "colors_fg": "yellow",
-        #         "colors_fg_bokeh": "darkred",
-        #         "layer": "userland",
-        #         "label_layer": 4,
-        #         "marker": "plus",
-        #     }
-        # )
         
     num_metrics = 0 # initialize the metric count
     add_power = False # initialize the boolean

@@ -155,24 +155,25 @@ def generate_launch_description():
         }.items(),
     )
 
-    # quadruped_controller_node = Node(
-    #     package="champ_base",
-    #     executable="quadruped_controller_node",
-    #     output="screen",
-    #     parameters=[
-    #         {"use_sim_time": LaunchConfiguration("use_sim_time")},
-    #         {"gazebo": LaunchConfiguration("gazebo")},
-    #         {"publish_joint_states": LaunchConfiguration("publish_joint_states")},
-    #         {"publish_joint_control": LaunchConfiguration("publish_joint_control")},
-    #         {"publish_foot_contacts": LaunchConfiguration("publish_foot_contacts")},
-    #         {"joint_controller_topic": LaunchConfiguration("joint_controller_topic")},
-    #         {"urdf": Command(['xacro ', LaunchConfiguration('description_path')])},
-    #         LaunchConfiguration('joints_map_path'),
-    #         LaunchConfiguration('links_map_path'),
-    #         LaunchConfiguration('gait_config_path'),
-    #     ],
-    #     remappings=[("/cmd_vel/smooth", "/cmd_vel")],
-    # )
+    # NOTE: COMMENT THIS NODE OUT WHEN RUNNING robotperf_quadruped_control_e2e.launch.py
+    quadruped_controller_node = Node(
+        package="champ_base",
+        executable="quadruped_controller_node",
+        output="screen",
+        parameters=[
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
+            {"gazebo": LaunchConfiguration("gazebo")},
+            {"publish_joint_states": LaunchConfiguration("publish_joint_states")},
+            {"publish_joint_control": LaunchConfiguration("publish_joint_control")},
+            {"publish_foot_contacts": LaunchConfiguration("publish_foot_contacts")},
+            {"joint_controller_topic": LaunchConfiguration("joint_controller_topic")},
+            {"urdf": Command(['xacro ', LaunchConfiguration('description_path')])},
+            LaunchConfiguration('joints_map_path'),
+            LaunchConfiguration('links_map_path'),
+            LaunchConfiguration('gait_config_path'),
+        ],
+        remappings=[("/cmd_vel/smooth", "/cmd_vel")],
+    )
 
     state_estimator_node = Node(
         package="champ_base",
@@ -257,7 +258,7 @@ def generate_launch_description():
             declare_publish_odom_tf,
             declare_close_loop_odom,
             description_ld,
-            # quadruped_controller_node,
+            quadruped_controller_node,
             state_estimator_node,
             base_to_footprint_ekf,
             footprint_to_odom_ekf,

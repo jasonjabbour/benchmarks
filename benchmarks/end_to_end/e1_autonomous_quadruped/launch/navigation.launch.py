@@ -107,30 +107,31 @@ def generate_launch_description():
     )
 
 
-    container = ComposableNodeContainer(
-        name='depthimage_to_laserscan_container',
-        namespace='',
-        package='rclcpp_components',
-        executable='component_container',
-        composable_node_descriptions=[
+    # NOTE: COMMENT THIS NODE OUT WHEN RUNNING robotperf_quadruped_percpetion_e2e.launch.py
+    # container = ComposableNodeContainer(
+    #     name='depthimage_to_laserscan_container',
+    #     namespace='',
+    #     package='rclcpp_components',
+    #     executable='component_container',
+    #     composable_node_descriptions=[
 
-            # Convert Depth Image to Laserscan
-            ComposableNode(
-                # namespace="robotperf/benchmark",
-                package='pointcloud_to_laserscan',
-                plugin='pointcloud_to_laserscan::PointCloudToLaserScanNode',
-                name='pointcloud_to_laserscan_node',
-                remappings=[
-                    ('cloud_in', '/velodyne_points'),
-                ], 
-                parameters=[ {'scan_time': 0.000000001} 
-                ]
+    #         # Convert Depth Image to Laserscan
+    #         ComposableNode(
+    #             # namespace="robotperf/benchmark",
+    #             package='pointcloud_to_laserscan',
+    #             plugin='pointcloud_to_laserscan::PointCloudToLaserScanNode',
+    #             name='pointcloud_to_laserscan_node',
+    #             remappings=[
+    #                 ('cloud_in', '/velodyne_points'),
+    #             ], 
+    #             parameters=[ {'scan_time': 0.000000001} 
+    #             ]
                 
-            ), 
+    #         ), 
 
-        ],
-        output='screen',
-    )
+    #     ],
+    #     output='screen',
+    # )
 
     # Map Server Node
     map_server = Node(
@@ -264,7 +265,7 @@ def generate_launch_description():
             declare_world_init_heading,
             bringup_ld,
             gazebo_ld,
-            container, 
+            # container, 
             map_server, 
             amcl, 
             planner_server, 
