@@ -171,43 +171,45 @@ DECLARE_TRACEPOINT(
 /**
  * Trace point while initiating the callback of robotperf::perception::PointCloudInputComponent component
  * 
- * Notes the `tracetools_benchmark` version autonmatically
+ * Notes the `tracetools_benchmark` version automatically.
  * 
  * \param[in] pointcloud_input_node rclcpp::node::Node subject to the callback
  * \param[in] pointcloud_input_pointcloud_msg pointcloud ROS message stored as sensor_msgs::msg::PointCloud2::ConstSharedPtr
  * \param[in] pointcloud_input_header_nsec_arg nanosec field of the header (std_msgs/Header) of sensor_msgs::msg::PointCloud2's ROS message
  * \param[in] pointcloud_input_header_sec_arg sec field of the header (std_msgs/Header) of sensor_msgs::msg::PointCloud2's ROS message
  * \param[in] pointcloud_input_msg_size size of the pointcloud ROS message stored as bytes
+ * \param[in] key Unique identifier for tracking the message across components.
  */
-
- DECLARE_TRACEPOINT(
+DECLARE_TRACEPOINT(
   robotperf_pointcloud_input_cb_init, 
   const void * pointcloud_input_node, 
   const void * pointcloud_input_pointcloud_msg, 
   uint32_t pointcloud_input_header_nsec_arg, 
   uint32_t pointcloud_input_header_sec_arg, 
-  size_t pointcloud_input_msg_size)
+  size_t pointcloud_input_msg_size,
+  uint32_t key)
 
 /// `robotperf_pointcloud_input_cb_fini`
 /**
- * Tracepoint while finishing the callback of robotperf::perception::PointCloudInputComponent componnet
+ * Tracepoint while finishing the callback of robotperf::perception::PointCloudInputComponent component
  * 
  * Notes the `tracetools_benchmark` version automatically. 
  * 
- * \param[in] pointcloud_input_node rclcpp::node::Node subject the callback
+ * \param[in] pointcloud_input_node rclcpp::node::Node subject to the callback
  * \param[in] pointcloud_input_pointcloud_msg pointcloud ROS message stored as sensor_msgs::msg::PointCloud2::ConstSharedPtr
  * \param[in] pointcloud_input_header_nsec_arg nanosec field of the header (std_msgs/Header) of sensor_msgs::msg::PointCloud2's ROS message
  * \param[in] pointcloud_input_header_sec_arg sec field of the header (std_msgs/Header) of sensor_msgs::msg::PointCloud2's ROS message
- * \param[in] pointcloud_input_msg_size size of pointcloud ROS message stored as bytes
-*/
-
+ * \param[in] pointcloud_input_msg_size size of the pointcloud ROS message stored as bytes
+ * \param[in] key Unique identifier for tracking the message across components.
+ */
 DECLARE_TRACEPOINT(
   robotperf_pointcloud_input_cb_fini, 
   const void * pointcloud_input_node, 
   const void * pointcloud_input_pointcloud_msg, 
   uint32_t pointcloud_input_header_nsec_arg, 
   uint32_t pointcloud_input_header_sec_arg, 
-  size_t pointcloud_input_msg_size)
+  size_t pointcloud_input_msg_size,
+  uint32_t key)
 
 /// `robotperf_pointcloud_output_cb_init`
 /**
@@ -220,6 +222,7 @@ DECLARE_TRACEPOINT(
  * \param[in] image_input_header_nsec_arg nanosec field of the header (std_msgs/Header) of sensor_msgs::msg::PointCloud2's ROS message 
  * \param[in] image_input_header_sec_arg sec field of the header (std_msgs/Header) of sensor_msgs::msg::PointCloud2's ROS message 
  * \param[in] pointcloud_output_msg_size size of pointcloud ROS message stored as bytes
+ * \param[in] key Unique identifier for tracking the message across components.
  */
 DECLARE_TRACEPOINT(
   robotperf_pointcloud_output_cb_init,
@@ -227,9 +230,10 @@ DECLARE_TRACEPOINT(
   const void * pointcloud_output_pointcloud_msg,
   uint32_t image_input_header_nsec_arg,
   uint32_t image_input_header_sec_arg,
-  size_t pointcloud_output_msg_size)
+  size_t pointcloud_output_msg_size,
+  uint32_t key)
 
-/// `robotperf_pointcloud_output_cb_init`
+/// `robotperf_pointcloud_output_cb_fini`
 /**
  * Tracepoint while finishing the callback of robotperf::perception::PointCloudOutputComponent component
  *
@@ -240,6 +244,7 @@ DECLARE_TRACEPOINT(
  * \param[in] image_input_header_nsec_arg nanosec field of the header (std_msgs/Header) of sensor_msgs::msg::PointCloud2's ROS message 
  * \param[in] image_input_header_sec_arg sec field of the header (std_msgs/Header) of sensor_msgs::msg::PointCloud2's ROS message 
  * \param[in] pointcloud_output_msg_size size of pointcloud ROS message stored as bytes
+ * \param[in] key Unique identifier for tracking the message across components.
  */
 DECLARE_TRACEPOINT(
   robotperf_pointcloud_output_cb_fini,
@@ -247,7 +252,8 @@ DECLARE_TRACEPOINT(
   const void * pointcloud_output_pointcloud_msg,
   uint32_t image_input_header_nsec_arg,
   uint32_t image_input_header_sec_arg,
-  size_t pointcloud_output_msg_size)
+  size_t pointcloud_output_msg_size,
+  uint32_t key)
 
 /// `robotperf_laserscan_input_cb_init`
 /**
@@ -260,6 +266,7 @@ DECLARE_TRACEPOINT(
  * \param[in] laserscan_input_header_nsec_arg nanosec field of the header (std_msgs/Header) of sensor_msgs::msg::LaserScan's ROS message 
  * \param[in] laserscan_input_header_sec_arg sec field of the header (std_msgs/Header) of sensor_msgs::msg::LaserScan's ROS message 
  * \param[in] laserscan_input_msg_size size of laserscan ROS message stored as bytes
+ * \param[in] key Unique identifier for tracking the message across components.
  */
 DECLARE_TRACEPOINT(
   robotperf_laserscan_input_cb_init,
@@ -267,7 +274,8 @@ DECLARE_TRACEPOINT(
   const void * laserscan_input_scan_msg,
   uint32_t laserscan_input_header_nsec_arg,
   uint32_t laserscan_input_header_sec_arg,
-  size_t laserscan_input_msg_size)
+  size_t laserscan_input_msg_size,
+  uint32_t key)
 
 /// `robotperf_laserscan_input_cb_fini`
 /**
@@ -280,6 +288,7 @@ DECLARE_TRACEPOINT(
  * \param[in] laserscan_input_header_nsec_arg nanosec field of the header (std_msgs/Header) of sensor_msgs::msg::LaserScan's ROS message 
  * \param[in] laserscan_input_header_sec_arg sec field of the header (std_msgs/Header) of sensor_msgs::msg::LaserScan's ROS message 
  * \param[in] laserscan_input_msg_size size of laserscan ROS message stored as bytes
+ * \param[in] key Unique identifier for tracking the message across components.
  */
 DECLARE_TRACEPOINT(
   robotperf_laserscan_input_cb_fini,
@@ -287,7 +296,8 @@ DECLARE_TRACEPOINT(
   const void * laserscan_input_scan_msg,
   uint32_t laserscan_input_header_nsec_arg,
   uint32_t laserscan_input_header_sec_arg,
-  size_t laserscan_input_msg_size)
+  size_t laserscan_input_msg_size,
+  uint32_t key)
 
 /// `robotperf_laserscan_output_cb_init`
 /**
@@ -300,6 +310,7 @@ DECLARE_TRACEPOINT(
  * \param[in] laserscan_output_header_nsec_arg nanosec field of the header (std_msgs/Header) of sensor_msgs::msg::LaserScan's ROS message 
  * \param[in] laserscan_output_header_sec_arg sec field of the header (std_msgs/Header) of sensor_msgs::msg::LaserScan's ROS message 
  * \param[in] laserscan_output_msg_size size of laserscan ROS message stored as bytes
+ * \param[in] key Unique identifier for tracking the message across components.
  */
 DECLARE_TRACEPOINT(
   robotperf_laserscan_output_cb_init,
@@ -307,7 +318,8 @@ DECLARE_TRACEPOINT(
   const void * laserscan_output_scan_msg,
   uint32_t laserscan_output_header_nsec_arg,
   uint32_t laserscan_output_header_sec_arg,
-  size_t laserscan_output_msg_size)
+  size_t laserscan_output_msg_size,
+  uint32_t key)
 
 /// `robotperf_laserscan_output_cb_fini`
 /**
@@ -320,6 +332,7 @@ DECLARE_TRACEPOINT(
  * \param[in] laserscan_output_header_nsec_arg nanosec field of the header (std_msgs/Header) of sensor_msgs::msg::LaserScan's ROS message 
  * \param[in] laserscan_output_header_sec_arg sec field of the header (std_msgs/Header) of sensor_msgs::msg::LaserScan's ROS message 
  * \param[in] laserscan_output_msg_size size of laserscan ROS message stored as bytes
+ * \param[in] key Unique identifier for tracking the message across components.
  */
 DECLARE_TRACEPOINT(
   robotperf_laserscan_output_cb_fini,
@@ -327,7 +340,8 @@ DECLARE_TRACEPOINT(
   const void * laserscan_output_scan_msg,
   uint32_t laserscan_output_header_nsec_arg,
   uint32_t laserscan_output_header_sec_arg,
-  size_t laserscan_output_msg_size)
+  size_t laserscan_output_msg_size,
+  uint32_t key)
 
 
 /// `robotperf_joint_trajectory_output_cb_init`
@@ -436,6 +450,63 @@ DECLARE_TRACEPOINT(
   const void * twist_input_node,
   const void * twist_input_msg,
   size_t twist_input_msg_size)
+
+
+/// `robotperf_msg_published`
+/**
+ * Tracepoint when a ROS2 message is published.
+ *
+ * \param[in] node Pointer to the ROS2 node publishing the message.
+ * \param[in] msg Pointer to the ROS2 message being published.
+ * \param[in] key Unique identifier for tracking the message across components.
+ */
+DECLARE_TRACEPOINT(
+    robotperf_msg_published_1,
+    const void * node,
+    const void * msg,
+    uint32_t key);
+
+DECLARE_TRACEPOINT(
+    robotperf_msg_published_2,
+    const void * node,
+    const void * msg,
+    uint32_t key);
+
+/// `robotperf_msg_received`
+/**
+ * Tracepoint when a ROS2 message is received.
+ *
+ * \param[in] node Pointer to the ROS2 node receiving the message.
+ * \param[in] msg Pointer to the received ROS2 message.
+ * \param[in] key Unique identifier for tracking the message across components.
+ */
+DECLARE_TRACEPOINT(
+    robotperf_msg_received_1,
+    const void * node,
+    const void * msg,
+    uint32_t key);
+
+DECLARE_TRACEPOINT(
+    robotperf_msg_received_2,
+    const void * node,
+    const void * msg,
+    uint32_t key);
+
+
+DECLARE_TRACEPOINT(
+    robotperf_msg_published_size_1,
+    const void * node,
+    const void * msg,
+    uint32_t key, 
+    size_t size);
+
+DECLARE_TRACEPOINT(
+    robotperf_msg_received_size_1,
+    const void * node,
+    const void * msg,
+    uint32_t key, 
+    size_t size);
+
 
 
 #ifdef __cplusplus

@@ -142,7 +142,8 @@ void TRACEPOINT(
   const void * pointcloud_input_pointcloud_msg_arg, 
   uint32_t pointcloud_input_header_nsec_arg, 
   uint32_t pointcloud_input_header_sec_arg, 
-  size_t pointcloud_input_msg_size_arg)
+  size_t pointcloud_input_msg_size_arg,
+  uint32_t key_arg)
 {
   CONDITIONAL_TP(
     robotperf_pointcloud_input_cb_init, 
@@ -150,7 +151,8 @@ void TRACEPOINT(
     pointcloud_input_pointcloud_msg_arg,
     pointcloud_input_header_nsec_arg, 
     pointcloud_input_header_sec_arg, 
-    pointcloud_input_msg_size_arg);
+    pointcloud_input_msg_size_arg,
+    key_arg);
 }
 
 void TRACEPOINT(
@@ -159,7 +161,8 @@ void TRACEPOINT(
   const void * pointcloud_input_pointcloud_msg_arg, 
   uint32_t pointcloud_input_header_nsec_arg, 
   uint32_t pointcloud_input_header_sec_arg, 
-  size_t pointcloud_input_msg_size_arg)
+  size_t pointcloud_input_msg_size_arg,
+  uint32_t key_arg)
 {
   CONDITIONAL_TP(
     robotperf_pointcloud_input_cb_fini, 
@@ -167,7 +170,8 @@ void TRACEPOINT(
     pointcloud_input_pointcloud_msg_arg,
     pointcloud_input_header_nsec_arg, 
     pointcloud_input_header_sec_arg, 
-    pointcloud_input_msg_size_arg);
+    pointcloud_input_msg_size_arg,
+    key_arg);
 }
 
 // pointcloud_output
@@ -177,7 +181,8 @@ void TRACEPOINT(
   const void * pointcloud_output_pointcloud_msg,
   uint32_t image_input_header_nsec_arg,
   uint32_t image_input_header_sec_arg,
-  size_t pointcloud_output_msg_size_arg)
+  size_t pointcloud_output_msg_size_arg,
+  uint32_t key_arg)
 {
   CONDITIONAL_TP(
     robotperf_pointcloud_output_cb_init,
@@ -185,7 +190,8 @@ void TRACEPOINT(
     pointcloud_output_pointcloud_msg,
     image_input_header_nsec_arg,
     image_input_header_sec_arg,
-    pointcloud_output_msg_size_arg);
+    pointcloud_output_msg_size_arg,
+    key_arg);
 }
 
 void TRACEPOINT(
@@ -194,7 +200,8 @@ void TRACEPOINT(
   const void * pointcloud_output_pointcloud_msg,
   uint32_t image_input_header_nsec_arg,
   uint32_t image_input_header_sec_arg,
-  size_t pointcloud_output_msg_size_arg)
+  size_t pointcloud_output_msg_size_arg,
+  uint32_t key_arg)
 {
   CONDITIONAL_TP(
     robotperf_pointcloud_output_cb_fini,
@@ -202,7 +209,8 @@ void TRACEPOINT(
     pointcloud_output_pointcloud_msg,
     image_input_header_nsec_arg,
     image_input_header_sec_arg,
-    pointcloud_output_msg_size_arg);
+    pointcloud_output_msg_size_arg,
+    key_arg);
 }
 
 // laserscan_input
@@ -212,7 +220,8 @@ void TRACEPOINT(
   const void * laserscan_input_scan_msg_arg,
   uint32_t laserscan_input_header_nsec_arg,
   uint32_t laserscan_input_header_sec_arg,
-  size_t laserscan_input_msg_size_arg)
+  size_t laserscan_input_msg_size_arg,
+  uint32_t key_arg)
 {
   CONDITIONAL_TP(
     robotperf_laserscan_input_cb_init,
@@ -220,7 +229,8 @@ void TRACEPOINT(
     laserscan_input_scan_msg_arg,
     laserscan_input_header_nsec_arg,
     laserscan_input_header_sec_arg,
-    laserscan_input_msg_size_arg);
+    laserscan_input_msg_size_arg,
+    key_arg);
 }
 
 void TRACEPOINT(
@@ -229,7 +239,8 @@ void TRACEPOINT(
   const void * laserscan_input_scan_msg_arg,
   uint32_t laserscan_input_header_nsec_arg,
   uint32_t laserscan_input_header_sec_arg,
-  size_t laserscan_input_msg_size_arg)
+  size_t laserscan_input_msg_size_arg,
+  uint32_t key_arg)
 {
   CONDITIONAL_TP(
     robotperf_laserscan_input_cb_fini,
@@ -237,7 +248,8 @@ void TRACEPOINT(
     laserscan_input_scan_msg_arg,
     laserscan_input_header_nsec_arg,
     laserscan_input_header_sec_arg,
-    laserscan_input_msg_size_arg);
+    laserscan_input_msg_size_arg,
+    key_arg);
 }
 
 // laserscan_output
@@ -247,7 +259,8 @@ void TRACEPOINT(
   const void * laserscan_output_scan_msg_arg,
   uint32_t laserscan_output_header_nsec_arg,
   uint32_t laserscan_output_header_sec_arg,
-  size_t laserscan_output_msg_size_arg)
+  size_t laserscan_output_msg_size_arg,
+  uint32_t key_arg)
 {
   CONDITIONAL_TP(
     robotperf_laserscan_output_cb_init,
@@ -255,7 +268,8 @@ void TRACEPOINT(
     laserscan_output_scan_msg_arg,
     laserscan_output_header_nsec_arg,
     laserscan_output_header_sec_arg,
-    laserscan_output_msg_size_arg);
+    laserscan_output_msg_size_arg,
+    key_arg);
 }
 
 void TRACEPOINT(
@@ -264,7 +278,8 @@ void TRACEPOINT(
   const void * laserscan_output_scan_msg_arg,
   uint32_t laserscan_output_header_nsec_arg,
   uint32_t laserscan_output_header_sec_arg,
-  size_t laserscan_output_msg_size_arg)
+  size_t laserscan_output_msg_size_arg,
+  uint32_t key_arg)
 {
   CONDITIONAL_TP(
     robotperf_laserscan_output_cb_fini,
@@ -272,9 +287,9 @@ void TRACEPOINT(
     laserscan_output_scan_msg_arg,
     laserscan_output_header_nsec_arg,
     laserscan_output_header_sec_arg,
-    laserscan_output_msg_size_arg);
+    laserscan_output_msg_size_arg,
+    key_arg);
 }
-
 
 // joint_trajectory_output
 void TRACEPOINT(
@@ -374,6 +389,93 @@ void TRACEPOINT(
     twist_input_node_arg,
     twist_input_msg_arg,
     twist_input_msg_size_arg);
+}
+
+// Generic Published Tracepoints
+void TRACEPOINT(
+    robotperf_msg_published_1,
+    const void * node_arg,
+    const void * msg_arg,
+    uint32_t key_arg)
+{
+    CONDITIONAL_TP(
+        robotperf_msg_published_1,
+        node_arg,
+        msg_arg,
+        key_arg);
+}
+
+void TRACEPOINT(
+    robotperf_msg_published_2,
+    const void * node_arg,
+    const void * msg_arg,
+    uint32_t key_arg)
+{
+    CONDITIONAL_TP(
+        robotperf_msg_published_2,
+        node_arg,
+        msg_arg,
+        key_arg);
+}
+
+// Generic Received Tracepoints
+void TRACEPOINT(
+    robotperf_msg_received_1,
+    const void * node_arg,
+    const void * msg_arg,
+    uint32_t key_arg)
+{
+    CONDITIONAL_TP(
+        robotperf_msg_received_1,
+        node_arg,
+        msg_arg,
+        key_arg);
+}
+
+void TRACEPOINT(
+    robotperf_msg_received_2,
+    const void * node_arg,
+    const void * msg_arg,
+    uint32_t key_arg)
+{
+    CONDITIONAL_TP(
+        robotperf_msg_received_2,
+        node_arg,
+        msg_arg,
+        key_arg);
+}
+
+
+// Generic Tracepoints with Message Size
+void TRACEPOINT(
+    robotperf_msg_published_size_1,
+    const void * node_arg,
+    const void * msg_arg,
+    uint32_t key_arg, 
+    size_t size_arg)
+{
+    CONDITIONAL_TP(
+        robotperf_msg_published_size_1,
+        node_arg,
+        msg_arg,
+        key_arg, 
+        size_arg);
+}
+
+
+void TRACEPOINT(
+    robotperf_msg_received_size_1,
+    const void * node_arg,
+    const void * msg_arg,
+    uint32_t key_arg, 
+    size_t size_arg)
+{
+    CONDITIONAL_TP(
+        robotperf_msg_received_size_1,
+        node_arg,
+        msg_arg,
+        key_arg, 
+        size_arg);
 }
 
 #ifndef _WIN32
