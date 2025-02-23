@@ -1,5 +1,6 @@
 #include "message_publisher.hpp"
 #include <rclcpp/serialization.hpp>
+#include <random> 
 
 namespace robotperf
 {
@@ -126,19 +127,44 @@ void MessagePublisher::publish_message()
         auto msg = sensor_msgs::msg::Imu();
         msg.header.stamp = this->now();
         msg.header.stamp.nanosec = unique_key;
-        msg.orientation.w = 1.0;  
-        msg.angular_velocity.x = 0.1;
-        msg.linear_acceleration.z = 9.81;  
 
+        // Random number generator for sensor noise
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<double> noise(-0.05, 0.05);  // Small noise range
+
+        // Set Orientation (Quaternion) with noise
+        msg.orientation.x = noise(gen);
+        msg.orientation.y = noise(gen);
+        msg.orientation.z = noise(gen);
+        msg.orientation.w = 1.0 + noise(gen);  // Slight deviation from perfect quaternion
+
+        // Set Angular Velocity (rad/s) with noise
+        msg.angular_velocity.x = 0.1 + noise(gen);
+        msg.angular_velocity.y = -0.1 + noise(gen);
+        msg.angular_velocity.z = 0.05 + noise(gen);
+
+        // Set Linear Acceleration (m/s^2) with noise
+        msg.linear_acceleration.x = noise(gen);
+        msg.linear_acceleration.y = noise(gen);
+        msg.linear_acceleration.z = 9.81 + noise(gen);
+
+        // Set Covariance Matrices (3x3 as 1D array) with small random deviations
         for (int i = 0; i < 9; i++) {
-            msg.orientation_covariance[i] = 0.1;
-            msg.angular_velocity_covariance[i] = 0.1;
-            msg.linear_acceleration_covariance[i] = 0.1;
+            msg.orientation_covariance[i] = (i % 4 == 0) ? 0.1 + noise(gen) : noise(gen);
+            msg.angular_velocity_covariance[i] = (i % 4 == 0) ? 0.1 + noise(gen) : noise(gen);
+            msg.linear_acceleration_covariance[i] = (i % 4 == 0) ? 0.1 + noise(gen) : noise(gen);
         }
 
         size_t msg_size = get_msg_size(msg);
 
-        TRACEPOINT(robotperf_msg_published_size_1, static_cast<const void *>(this), static_cast<const void *>(&msg), unique_key, msg_size);
+        TRACEPOINT(
+            robotperf_msg_published_size_1,
+            static_cast<const void *>(this),
+            static_cast<const void *>(&msg),
+            unique_key,
+            msg_size
+        );
 
         pub_imu_->publish(msg);
     }
