@@ -10,6 +10,12 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+
+  <!-- Dependencies required for message generation -->
+  <build_depend>rosidl_default_generators</build_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
@@ -34,6 +40,8 @@
   <depend>liblttng-ust-dev</depend>
   <depend>babeltrace</depend>
   <depend>pointcloud_to_laserscan</depend> 
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>  
 
   <build_depend>urdf</build_depend>
   <exec_depend>urdf</exec_depend>
@@ -41,12 +49,15 @@
   <build_depend>tf2</build_depend>
   <exec_depend>tf2</exec_depend>
 
-
   <buildtool_depend>ament_cmake</buildtool_depend>
   <!-- <buildtool_depend>ament_vitis</buildtool_depend> -->
   <!-- <buildtool_depend>ament_cuda</buildtool_depend>   -->
 
+  <!-- Declare that this package provides interfaces -->
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>
+
 </package>
