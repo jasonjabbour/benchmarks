@@ -99,88 +99,89 @@ void MessagePublisher::publish_message()
 
         pub_occupancy_grid_->publish(msg);
     }
+    // else if (message_type_ == "laserscan")
+    // {
+    //     if (quantization_enabled_)
+    //     {
+    //         // Use e3_custom_messages::msg::CustomLaserScan when quantization is enabled
+    //         e3_custom_messages::msg::CustomLaserScan msg;
+    //         msg.header.stamp = this->now();
+    //         msg.header.stamp.nanosec = unique_key;
+    //         msg.angle_min = -1.57f;
+    //         msg.angle_max = 1.57f;
+    //         msg.angle_increment = 0.01f;
+    //         msg.time_increment = 0.001f;
+    //         msg.scan_time = 0.1f;
+    //         msg.range_min = 0.1f;
+    //         msg.range_max = 10.0f;
+    //         msg.ranges.resize(message_size_, 5.0f);
+    //         msg.intensities.resize(message_size_, 255.0f);
+    //         size_t msg_size = get_msg_size(msg);
+    //         TRACEPOINT(robotperf_msg_published_size_1,
+    //                    static_cast<const void *>(this),
+    //                    static_cast<const void *>(&msg),
+    //                    unique_key, msg_size);
+    //         pub_laserscan_custom_->publish(msg);
+    //     }
+    //     else
+    //     {
+    //         auto msg = sensor_msgs::msg::LaserScan();
+    //         msg.header.stamp = this->now();
+    //         msg.header.stamp.nanosec = unique_key;
+    //         msg.angle_min = -1.57;
+    //         msg.angle_max = 1.57;
+    //         msg.angle_increment = 0.01;
+    //         msg.time_increment = 0.001;
+    //         msg.scan_time = 0.1;
+    //         msg.range_min = 0.1;
+    //         msg.range_max = 10.0;
+    //         msg.ranges.resize(message_size_, 5.0);
+    //         msg.intensities.resize(message_size_, 255);
+    //         size_t msg_size = get_msg_size(msg);
+    //         TRACEPOINT(robotperf_msg_published_size_1,
+    //                    static_cast<const void *>(this),
+    //                    static_cast<const void *>(&msg),
+    //                    unique_key, msg_size);
+    //         pub_laserscan_->publish(msg);
+    //     }
+    // }
     else if (message_type_ == "laserscan")
     {
-        if (quantization_enabled_)
-        {
-            // Use e3_custom_messages::msg::CustomLaserScan when quantization is enabled
-            e3_custom_messages::msg::CustomLaserScan msg;
-            msg.header.stamp = this->now();
-            msg.header.stamp.nanosec = unique_key;
-            msg.angle_min = -1.57f;
-            msg.angle_max = 1.57f;
-            msg.angle_increment = 0.01f;
-            msg.time_increment = 0.001f;
-            msg.scan_time = 0.1f;
-            msg.range_min = 0.1f;
-            msg.range_max = 10.0f;
-            msg.ranges.resize(message_size_, 5.0f);
-            msg.intensities.resize(message_size_, 255.0f);
-            size_t msg_size = get_msg_size(msg);
-            TRACEPOINT(robotperf_msg_published_size_1,
-                       static_cast<const void *>(this),
-                       static_cast<const void *>(&msg),
-                       unique_key, msg_size);
-            pub_laserscan_custom_->publish(msg);
+        if (quantization_enabled_) {
+            RCLCPP_INFO(this->get_logger(), "Quantization is not applicable to laserscan.");
         }
-        else
-        {
-            auto msg = sensor_msgs::msg::LaserScan();
-            msg.header.stamp = this->now();
-            msg.header.stamp.nanosec = unique_key;
-            msg.angle_min = -1.57;
-            msg.angle_max = 1.57;
-            msg.angle_increment = 0.01;
-            msg.time_increment = 0.001;
-            msg.scan_time = 0.1;
-            msg.range_min = 0.1;
-            msg.range_max = 10.0;
-            msg.ranges.resize(message_size_, 5.0);
-            msg.intensities.resize(message_size_, 255);
-            size_t msg_size = get_msg_size(msg);
-            TRACEPOINT(robotperf_msg_published_size_1,
-                       static_cast<const void *>(this),
-                       static_cast<const void *>(&msg),
-                       unique_key, msg_size);
-            pub_laserscan_->publish(msg);
-        }
+        
+        auto msg = sensor_msgs::msg::LaserScan();
+        msg.ranges.resize(message_size_, 5.0);
+        msg.intensities.resize(message_size_, 255);
+        msg.header.stamp = this->now();
+        msg.header.stamp.nanosec = unique_key;
+
+        size_t msg_size = get_msg_size(msg);
+
+        TRACEPOINT(robotperf_msg_published_size_1, static_cast<const void *>(this), static_cast<const void *>(&msg), unique_key, msg_size);
+
+        pub_laserscan_->publish(msg);
     }
     else if (message_type_ == "pointcloud")
     {
-        if (quantization_enabled_)
-        {
-            // Use e3_custom_messages::msg::CustomPointCloud2 for quantized pointcloud
-            e3_custom_messages::msg::CustomPointCloud2 msg;
-            msg.header.stamp = this->now();
-            msg.header.stamp.nanosec = unique_key;
-            msg.height = 1;
-            msg.width = message_size_;
-            msg.fields.resize(3);
-            msg.data.resize(message_size_ * 12, 0);
-            // Optionally: apply quantization logic to the data fields here
-            size_t msg_size = get_msg_size(msg);
-            TRACEPOINT(robotperf_msg_published_size_1,
-                       static_cast<const void *>(this),
-                       static_cast<const void *>(&msg),
-                       unique_key, msg_size);
-            pub_pointcloud_custom_->publish(msg);
+        if (quantization_enabled_) {
+            RCLCPP_INFO(this->get_logger(), "Quantization is not applicable to pointcloud.");
         }
-        else
-        {
-            auto msg = sensor_msgs::msg::PointCloud2();
-            msg.header.stamp = this->now();
-            msg.header.stamp.nanosec = unique_key;
-            msg.height = 1;
-            msg.width = message_size_;
-            msg.fields.resize(3);
-            msg.data.resize(message_size_ * 12, 0);
-            size_t msg_size = get_msg_size(msg);
-            TRACEPOINT(robotperf_msg_published_size_1,
-                       static_cast<const void *>(this),
-                       static_cast<const void *>(&msg),
-                       unique_key, msg_size);
-            pub_pointcloud_->publish(msg);
-        }
+
+        auto msg = sensor_msgs::msg::PointCloud2();
+        msg.height = 1;
+        msg.width = message_size_;
+        msg.fields.resize(3);  // x, y, z fields
+        msg.data.resize(message_size_ * 12, 0);
+        msg.header.stamp = this->now();
+        msg.header.stamp.nanosec = unique_key;
+
+        size_t msg_size = get_msg_size(msg);
+
+        TRACEPOINT(robotperf_msg_published_size_1, static_cast<const void *>(this), static_cast<const void *>(&msg), unique_key, msg_size);
+
+        pub_pointcloud_->publish(msg);
     }
     else if (message_type_ == "amcl_pose")
     {
