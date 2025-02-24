@@ -49,7 +49,7 @@ def generate_launch_description():
     # Message Publisher Node
     message_publisher_node = Node(
         namespace="robotperf",
-        package="e1_autonomous_quadruped",
+        package="e2_navigation_messages",
         executable="message_publisher_node",
         name="message_publisher",
         parameters=[
@@ -64,7 +64,7 @@ def generate_launch_description():
     # Message Subscriber Node
     message_subscriber_node = Node(
         namespace="robotperf",
-        package="e1_autonomous_quadruped",
+        package="e2_navigation_messages",
         executable="message_subscriber_node",
         name="message_subscriber",
         output="screen",
