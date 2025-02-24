@@ -37,6 +37,8 @@ from bokeh.models.annotations import Label
 
 import sys
 import argparse
+from collections import defaultdict
+
 # color("{:02x}".format(x), fg=16, bg="green")
 # debug = True  # debug flag, set to True if desired
 
@@ -655,126 +657,274 @@ class BenchmarkAnalyzer:
         # survivors
         return list(image_pipeline_msg_dict.values())
 
+    # def msgsets_from_trace(self, tracename, debug=False, target=True):
+    #     """
+    #     Returns a list of message sets ready to be used
+    #     for plotting them in various forms.
+
+    #     NOTE: A brute-force implementation. Brings various issues when
+    #     facing concurrent setups and/or machines with less capabilities.
+
+    #     NOTE: NOT coded for multiple Nodes running concurrently or multithreaded executors
+    #     Classification expects events in the corresponding order.
+    #     """
+    #     # Create a trace collection message iterator from the first command-line
+    #     # argument.
+    #     msg_it = bt2.TraceCollectionMessageIterator(tracename)
+
+    #     # Iterate the trace messages and pick ros2 ones
+    #     image_pipeline_msgs = []
+    #     for msg in msg_it:
+    #         # `bt2._EventMessageConst` is the Python type of an event message.
+    #         if type(msg) is bt2._EventMessageConst:
+    #             # An event message holds a trace event.
+    #             event = msg.event
+    #             # Only check `sched_switch` events.
+    #             # if "ros2" in event.name or "robotperf" in event.name:
+    #             if target and event.name in self.target_chain:
+    #                 image_pipeline_msgs.append(msg)
+    #             elif not target and event.name in self.power_chain:
+    #                 image_pipeline_msgs.append(msg)
+
+    #     # Form sets with each pipeline
+    #     image_pipeline_msg_sets = []
+    #     new_set = []  # used to track new complete sets
+    #     chain_index = 0  # track where in the chain we are so far
+    #     vpid_chain = -1  # used to track a set and differentiate from other callbacks
+
+    #     # NOTE: NOT CODED FOR MULTIPLE NODES RUNNING CONCURRENTLY
+    #     # this classification is going to miss the initial matches because
+    #     # "ros2:callback_start" will not be associated with the target chain and it won't stop
+    #     # being considered until a "ros2:callback_end" of that particular process is seen
+    #     for index in range(len(image_pipeline_msgs)):
+    #         if target and image_pipeline_msgs[index].event.name in self.target_chain:  # optimization
+
+    #             if debug:
+    #                 print("---")
+    #                 print("new: " + image_pipeline_msgs[index].event.name)
+    #                 print("expected: " + str(self.target_chain[chain_index]))
+    #                 print("chain_index: " + str(chain_index))
+
+    #             # first one            
+    #             if (
+    #                 chain_index == 0
+    #                 and image_pipeline_msgs[index].event.name == self.target_chain[chain_index]
+    #             ):
+    #                 new_set.append(image_pipeline_msgs[index])
+    #                 vpid_chain = image_pipeline_msgs[index].event.common_context_field.get(
+    #                     "vpid"
+    #                 )
+    #                 chain_index += 1
+    #                 if debug:
+    #                     print(color("Found: " + str(image_pipeline_msgs[index].event.name) + " - " + str([x.event.name for x in new_set]), fg="blue"))
+    #             # last one
+    #             elif (
+    #                 image_pipeline_msgs[index].event.name == self.target_chain[chain_index]
+    #                 and self.target_chain[chain_index] == self.target_chain[-1]
+    #                 and new_set[-1].event.name == self.target_chain[-2]
+    #                 and image_pipeline_msgs[index].event.common_context_field.get("vpid")
+    #                 == vpid_chain
+    #             ):
+    #                 new_set.append(image_pipeline_msgs[index])
+    #                 image_pipeline_msg_sets.append(new_set)
+    #                 if debug:
+    #                     print(color("Found: " + str(image_pipeline_msgs[index].event.name) + " - " + str([x.event.name for x in new_set]), fg="blue"))
+    #                 chain_index = 0  # restart
+    #                 new_set = []  # restart
+    #             # match
+    #             elif (
+    #                 image_pipeline_msgs[index].event.name == self.target_chain[chain_index]
+    #                 and image_pipeline_msgs[index].event.common_context_field.get("vpid")
+    #                 == vpid_chain
+    #             ):
+    #                 new_set.append(image_pipeline_msgs[index])
+    #                 chain_index += 1
+    #                 if debug:
+    #                     print(color("Found: " + str(image_pipeline_msgs[index].event.name) + " - " + str([x.event.name for x in new_set]), fg="green"))
+    #             # altered order
+    #             elif (
+    #                 image_pipeline_msgs[index].event.name in self.target_chain
+    #                 and image_pipeline_msgs[index].event.common_context_field.get("vpid")
+    #                 == vpid_chain
+    #             ):
+    #                 # pop ros2:callback_start in new_set, if followed by "ros2:callback_end"
+    #                 # NOTE: consider case of disconnected series of:
+    #                 #       "ros2:callback_start"
+    #                 #       "ros2:callback_end"
+    #                 if (image_pipeline_msgs[index].event.name == "ros2:callback_end"
+    #                     and self.target_chain[chain_index - 1] == "ros2:callback_start"):
+    #                     new_set.pop()
+    #                     chain_index -= 1
+    #                 # # it's been observed that "robotperf_benchmarks:robotperf_image_input_cb_init" triggers
+    #                 # # before "ros2_image_pipeline:image_proc_rectify_cb_fini" which leads to trouble
+    #                 # # Skip this as well as the next event
+    #                 # elif (image_pipeline_msgs[index].event.name == "robotperf_benchmarks:robotperf_image_input_cb_init"
+    #                 #     and self.target_chain[chain_index - 3] == "ros2_image_pipeline:image_proc_rectify_cb_fini"):
+    #                 #     print(color("Skipping: " + str(image_pipeline_msgs[index].event.name), fg="yellow"))
+    #                 # elif (image_pipeline_msgs[index].event.name == "robotperf_benchmarks:robotperf_image_input_cb_fini"
+    #                 #     and self.target_chain[chain_index - 3] == "ros2_image_pipeline:image_proc_rectify_cb_fini"):
+    #                 #     print(color("Skipping: " + str(image_pipeline_msgs[index].event.name), fg="yellow"))
+    #                 else:
+    #                     new_set.append(image_pipeline_msgs[index])
+    #                     if debug:
+    #                         print(color("Altered order: " + str([x.event.name for x in new_set]) + ", restarting", fg="red"))
+    #                     chain_index = 0  # restart
+    #                     new_set = []  # restart
+
+    #         elif not target and image_pipeline_msgs[index].event.name in self.power_chain:  # optimization
+     
+    #             # NOTE: Modify this logic if more power traces are added in the future (currently there's only one)
+    #             image_pipeline_msg_sets.append(image_pipeline_msgs[index])
+
+    #     return image_pipeline_msg_sets
+
+
+    # -------------------------------------------------
+    # ------------ New --------------------------------
+    # -------------------------------------------------
+
     def msgsets_from_trace(self, tracename, debug=False, target=True):
         """
-        Returns a list of message sets ready to be used
-        for plotting them in various forms.
-
-        NOTE: A brute-force implementation. Brings various issues when
-        facing concurrent setups and/or machines with less capabilities.
-
-        NOTE: NOT coded for multiple Nodes running concurrently or multithreaded executors
-        Classification expects events in the corresponding order.
+        Extracts ordered sets of messages matching the target chain from the trace.
+        Assumes input data is already clean and in order.
         """
-        # Create a trace collection message iterator from the first command-line
-        # argument.
         msg_it = bt2.TraceCollectionMessageIterator(tracename)
 
-        # Iterate the trace messages and pick ros2 ones
-        image_pipeline_msgs = []
-        for msg in msg_it:
-            # `bt2._EventMessageConst` is the Python type of an event message.
-            if type(msg) is bt2._EventMessageConst:
-                # An event message holds a trace event.
-                event = msg.event
-                # Only check `sched_switch` events.
-                # if "ros2" in event.name or "robotperf" in event.name:
-                if target and event.name in self.target_chain:
-                    image_pipeline_msgs.append(msg)
-                elif not target and event.name in self.power_chain:
-                    image_pipeline_msgs.append(msg)
+        # Collect only relevant messages
+        image_pipeline_msgs = [msg for msg in msg_it if isinstance(msg, bt2._EventMessageConst) and 
+                            msg.event.name in self.target_chain]
 
-        # Form sets with each pipeline
-        image_pipeline_msg_sets = []
-        new_set = []  # used to track new complete sets
-        chain_index = 0  # track where in the chain we are so far
-        vpid_chain = -1  # used to track a set and differentiate from other callbacks
+        image_pipeline_msg_sets = []  # List of completed sequences
+        new_set = []  # Current sequence being built
+        chain_index = 0  # Track position in target chain
 
-        # NOTE: NOT CODED FOR MULTIPLE NODES RUNNING CONCURRENTLY
-        # this classification is going to miss the initial matches because
-        # "ros2:callback_start" will not be associated with the target chain and it won't stop
-        # being considered until a "ros2:callback_end" of that particular process is seen
-        for index in range(len(image_pipeline_msgs)):
-            if target and image_pipeline_msgs[index].event.name in self.target_chain:  # optimization
+        for msg in image_pipeline_msgs:
+            event_name = msg.event.name
+
+            if debug:
+                print("---")
+                print("new: " + event_name)
+                print("expected: " + str(self.target_chain[chain_index]))
+                print("chain_index: " + str(chain_index))
+
+            if event_name == self.target_chain[chain_index]:  # Matches expected order
+                new_set.append(msg)
+                chain_index += 1
+
+                if debug:
+                    print(color("Found: " + event_name + " - " + str([x.event.name for x in new_set]), fg="blue"))
+
+                if chain_index == len(self.target_chain):  # Full sequence collected
+                    image_pipeline_msg_sets.append(new_set)
+
+                    if debug:
+                        print(color("Found full set! Resetting.", fg="green"))
+
+                    new_set = []  # Reset for next set
+                    chain_index = 0  # Restart
+
+            else:
+                if debug:
+                    print(color("Unexpected event: " + event_name + ", restarting sequence", fg="red"))
+
+                # Reset if we break the expected sequence
+                new_set = [msg] if event_name == self.target_chain[0] else []
+                chain_index = 1 if event_name == self.target_chain[0] else 0
+
+        return image_pipeline_msg_sets
+
+
+    def msgsets_from_trace_key(self, tracename, debug=False, target=True):
+        """
+        Extracts ordered sets of messages matching the target chain from the trace.
+        Uses the key field to correctly associate tracepoints, even if they are out of order.
+
+        Args:
+            tracename (str): Path to the trace.
+            debug (bool): If True, enables debug logging.
+            target (bool): Whether to filter messages based on self.target_chain.
+
+        Returns:
+            list: A list of lists, where each inner list is a set of messages forming a complete target chain.
+        """
+
+        msg_it = bt2.TraceCollectionMessageIterator(tracename)
+
+        # Collect only relevant messages
+        image_pipeline_msgs = [
+            msg for msg in msg_it if isinstance(msg, bt2._EventMessageConst) and 
+            msg.event.name in self.target_chain
+        ]
+
+        # Dictionary to store messages by key
+        grouped_msgs = defaultdict(list)
+
+        for msg in image_pipeline_msgs:
+            try:
+                key = msg.event.payload_field["key"]
+                
+                # **Filter out large key values (keep only keys < 10,000)**
+                if key >= 10000:
+                    if debug:
+                        print(color(f"Skipping key {key} (too large)", fg="yellow"))
+                    continue
+
+            except KeyError:
+                if debug:
+                    print(color(f"Skipping event {msg.event.name} - no key found", fg="yellow"))
+                continue  # Skip messages without a key
+
+            grouped_msgs[key].append(msg)
+
+        image_pipeline_msg_sets = []  # List of ordered message sequences
+
+        for key, msgs in grouped_msgs.items():
+            # Sort messages by tracepoint timestamp to maintain order
+            msgs.sort(key=lambda x: x.default_clock_snapshot.ns_from_origin)
+
+            new_set = []
+            chain_index = 0  # Track position in target chain
+
+            for msg in msgs:
+                event_name = msg.event.name
 
                 if debug:
                     print("---")
-                    print("new: " + image_pipeline_msgs[index].event.name)
-                    print("expected: " + str(self.target_chain[chain_index]))
-                    print("chain_index: " + str(chain_index))
+                    print(f"Key: {key}")
+                    print(f"New event: {event_name}")
+                    print(f"Expected: {self.target_chain[chain_index]}")
+                    print(f"Chain index: {chain_index}")
 
-                # first one            
-                if (
-                    chain_index == 0
-                    and image_pipeline_msgs[index].event.name == self.target_chain[chain_index]
-                ):
-                    new_set.append(image_pipeline_msgs[index])
-                    vpid_chain = image_pipeline_msgs[index].event.common_context_field.get(
-                        "vpid"
-                    )
+                if event_name == self.target_chain[chain_index]:  # Matches expected order
+                    new_set.append(msg)
                     chain_index += 1
+
                     if debug:
-                        print(color("Found: " + str(image_pipeline_msgs[index].event.name) + " - " + str([x.event.name for x in new_set]), fg="blue"))
-                # last one
-                elif (
-                    image_pipeline_msgs[index].event.name == self.target_chain[chain_index]
-                    and self.target_chain[chain_index] == self.target_chain[-1]
-                    and new_set[-1].event.name == self.target_chain[-2]
-                    and image_pipeline_msgs[index].event.common_context_field.get("vpid")
-                    == vpid_chain
-                ):
-                    new_set.append(image_pipeline_msgs[index])
-                    image_pipeline_msg_sets.append(new_set)
-                    if debug:
-                        print(color("Found: " + str(image_pipeline_msgs[index].event.name) + " - " + str([x.event.name for x in new_set]), fg="blue"))
-                    chain_index = 0  # restart
-                    new_set = []  # restart
-                # match
-                elif (
-                    image_pipeline_msgs[index].event.name == self.target_chain[chain_index]
-                    and image_pipeline_msgs[index].event.common_context_field.get("vpid")
-                    == vpid_chain
-                ):
-                    new_set.append(image_pipeline_msgs[index])
-                    chain_index += 1
-                    if debug:
-                        print(color("Found: " + str(image_pipeline_msgs[index].event.name) + " - " + str([x.event.name for x in new_set]), fg="green"))
-                # altered order
-                elif (
-                    image_pipeline_msgs[index].event.name in self.target_chain
-                    and image_pipeline_msgs[index].event.common_context_field.get("vpid")
-                    == vpid_chain
-                ):
-                    # pop ros2:callback_start in new_set, if followed by "ros2:callback_end"
-                    # NOTE: consider case of disconnected series of:
-                    #       "ros2:callback_start"
-                    #       "ros2:callback_end"
-                    if (image_pipeline_msgs[index].event.name == "ros2:callback_end"
-                        and self.target_chain[chain_index - 1] == "ros2:callback_start"):
-                        new_set.pop()
-                        chain_index -= 1
-                    # # it's been observed that "robotperf_benchmarks:robotperf_image_input_cb_init" triggers
-                    # # before "ros2_image_pipeline:image_proc_rectify_cb_fini" which leads to trouble
-                    # # Skip this as well as the next event
-                    # elif (image_pipeline_msgs[index].event.name == "robotperf_benchmarks:robotperf_image_input_cb_init"
-                    #     and self.target_chain[chain_index - 3] == "ros2_image_pipeline:image_proc_rectify_cb_fini"):
-                    #     print(color("Skipping: " + str(image_pipeline_msgs[index].event.name), fg="yellow"))
-                    # elif (image_pipeline_msgs[index].event.name == "robotperf_benchmarks:robotperf_image_input_cb_fini"
-                    #     and self.target_chain[chain_index - 3] == "ros2_image_pipeline:image_proc_rectify_cb_fini"):
-                    #     print(color("Skipping: " + str(image_pipeline_msgs[index].event.name), fg="yellow"))
-                    else:
-                        new_set.append(image_pipeline_msgs[index])
+                        print(color(f"Found: {event_name} - {str([x.event.name for x in new_set])}", fg="blue"))
+
+                    if chain_index == len(self.target_chain):  # Full sequence collected
+                        image_pipeline_msg_sets.append(new_set)
+
                         if debug:
-                            print(color("Altered order: " + str([x.event.name for x in new_set]) + ", restarting", fg="red"))
-                        chain_index = 0  # restart
-                        new_set = []  # restart
+                            print(color("Found full set! Resetting.", fg="green"))
 
-            elif not target and image_pipeline_msgs[index].event.name in self.power_chain:  # optimization
-     
-                # NOTE: Modify this logic if more power traces are added in the future (currently there's only one)
-                image_pipeline_msg_sets.append(image_pipeline_msgs[index])
+                        new_set = []  # Reset for next set
+                        chain_index = 0  # Restart
+
+                else:
+                    if debug:
+                        print(color(f"Unexpected event: {event_name}, restarting sequence", fg="red"))
+
+                    # Reset if we break the expected sequence
+                    new_set = [msg] if event_name == self.target_chain[0] else []
+                    chain_index = 1 if event_name == self.target_chain[0] else 0
 
         return image_pipeline_msg_sets
+
+
+    # -------------------------------------------------
+    # ------------ End --------------------------------
+    # -------------------------------------------------
 
     def msgsets_from_trace_no_vpid(self, tracename, debug=False, target=True, order=True):
         """
@@ -2774,6 +2924,9 @@ class BenchmarkAnalyzer:
                 aux_set.append((target_chain_ns[msg_index] - previous) / 1e6)
             image_pipeline_msg_sets_ns.append(aux_set)
 
+
+        print("UPDATED")
+        print(image_pipeline_msg_sets_ns)
         return image_pipeline_msg_sets_ns
     
     def barchart_data_latency_disordered(self, image_pipeline_msg_sets):
@@ -3807,6 +3960,10 @@ class BenchmarkAnalyzer:
         if self.hardware_device_type == "cpu" and self.trace_sets_filter_type == "name":
             self.image_pipeline_msg_sets \
                 = self.msgsets_from_trace(trace_path, debug=debug)
+        elif self.hardware_device_type == "cpu" and self.trace_sets_filter_type == "key":
+            print("HIIIIIIIIIIIIIIIIIIIIIII")
+            self.image_pipeline_msg_sets \
+                = self.msgsets_from_trace_key(trace_path, debug=debug)
         elif self.hardware_device_type == "cpu" and self.trace_sets_filter_type == "ID":
             self.image_pipeline_msg_sets \
                 = self.msgsets_from_trace_identifier(trace_path, debug=debug)
@@ -4219,7 +4376,7 @@ class BenchmarkAnalyzer:
             # No need to set the analysis_type property since it is not evaluated down the road with FPGA hardware
             return
 
-        if filter_type == "name" or filter_type == "ID" or filter_type == "UID":
+        if filter_type == "name" or filter_type == "ID" or filter_type == "UID" or filter_type == "key":
             print("Setting {} method for filtering trace sets".format(filter_type))
             self.trace_sets_filter_type = filter_type
         else:

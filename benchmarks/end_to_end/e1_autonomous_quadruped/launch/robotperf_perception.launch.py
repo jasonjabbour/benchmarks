@@ -10,7 +10,7 @@ from ros2_benchmark import ROS2BenchmarkConfig, ROS2BenchmarkTest
 # These are provided as environment variables for CI, you can manually hardcord them for other uses
 rosbag = 'end_to_end/rosbag2_end_to_end_1m' #os.environ.get('ROSBAG') # Example: 'perception/r2b_cafe'
 package = 'end_to_end_perception' #os.environ.get('PACKAGE') # Example: 'a6_depthimage_to_laserscan'
-type = 'grey' #os.environ.get('TYPE') # Example: 'grey'
+type = 'black' #os.environ.get('TYPE') # Example: 'grey'
 metric = 'latency' #os.environ.get('METRIC') # Example: 'latency'
 
 POWER_LIB = os.environ.get('POWER_LIB')
@@ -51,7 +51,7 @@ def launch_setup(container_prefix, container_sigterm_timeout):
             'qos': {'reliability': 'best_effort', 'durability': 'transient_local'},
         }],
         remappings=[('buffer/input0', 'data_loader/velodyne_points'), #subbing to
-                    ('input0', '/robotperf/velodyne_points'), #publishing to
+                    ('input0', '/robotperf/benchmark/velodyne_points'), #publishing to
                     ],                   
     )
 
@@ -181,8 +181,9 @@ class TestEnd2EndPerception(ROS2BenchmarkTest):
         # The number of frames to be buffered
         playback_message_buffer_size=30,
         # Upper and lower bounds of peak throughput search window
-        publisher_upper_frequency=30.0,
-        publisher_lower_frequency=30.0,
+        publisher_upper_frequency=100.0,
+        publisher_lower_frequency=10.0,
+        # additional_fixed_publisher_rate_tests=[1.0, 10.0, 30.0, 60.0, 100.0, 250.0, 500.0, 1000.0, 1500.0, 2000.0, 4000.0],
         custom_report_info={'data_resolution': IMAGE_RESOLUTION},
         option = OPTION,
         session_name = SESSION_NAME,
