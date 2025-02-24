@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>e2_navigation_messages</name>
+  <version>0.0.0</version>
+  <description>Benchmarking various message latencies used in autonomous navigation.</description>
+  <maintainer email="jasonjabbour@g.harvard.edu">Jason Jabbour</maintainer>
+  <author email="jasonjabbour@g.harvard.edu">Jason Jabbour</author>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <depend>ros2_benchmark</depend>
+  <depend>benchmark_utilities</depend>
+  <depend>ros2benchmark</depend>
+
+  <!-- Might not need all of these packages  -->
+  <depend>rclcpp</depend>
+  <depend>tracetools</depend>
+  <depend>tracetools_benchmark</depend>
+  <depend>tracetools_analysis</depend>
+  <depend>tracetools_launch</depend>
+  <depend>tracetools_trace</depend>
+  <depend>rclcpp_components</depend>
+  <depend>image_transport</depend>
+  <depend>image_pipeline</depend>
+  <depend>cyclonedds</depend>
+  <depend>rmw_cyclonedds_cpp</depend>
+  <depend>lttng-tools</depend>
+  <depend>liblttng-ust-dev</depend>
+  <depend>babeltrace</depend>
+  <depend>pointcloud_to_laserscan</depend> 
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>  
+  <depend>e3_custom_messages</depend>
+
+
+  <build_depend>urdf</build_depend>
+  <exec_depend>urdf</exec_depend>
+
+  <build_depend>tf2</build_depend>
+  <exec_depend>tf2</exec_depend>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <!-- <buildtool_depend>ament_vitis</buildtool_depend> -->
+  <!-- <buildtool_depend>ament_cuda</buildtool_depend>   -->
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>
+
