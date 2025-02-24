@@ -1,0 +1,2 @@
+CustomPoint position
+CustomQuaternion orientation
