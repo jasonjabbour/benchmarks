@@ -59,6 +59,9 @@ namespace pointcloud_to_laserscan
 PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions & options)
 : rclcpp::Node("pointcloud_to_laserscan", options)
 {
+  // Enable or disable subscribing to quantized pointcloud message type
+  quantized_enabled_ = this->declare_parameter("quantization_enabled", false);
+
   target_frame_ = this->declare_parameter("target_frame", "");
   tolerance_ = this->declare_parameter("transform_tolerance", 0.01);
   // TODO(hidmic): adjust default input queue size based on actual concurrency levels
@@ -79,23 +82,48 @@ PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions &
   pub_ = this->create_publisher<sensor_msgs::msg::LaserScan>("scan", rclcpp::SensorDataQoS());
 
   using std::placeholders::_1;
-  // if pointcloud target frame specified, we need to filter by transform availability
-  if (!target_frame_.empty()) {
+
+  // coditiona subscription
+  if (!quantized_enabled_) {
+    // The ORIGINAL logic for standard PointCloud2
+    // if pointcloud target frame specified, we need to filter by transform availability
+    if (!target_frame_.empty()) {
+      tf2_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+      auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
+        this->get_node_base_interface(), this->get_node_timers_interface());
+      tf2_->setCreateTimerInterface(timer_interface);
+      tf2_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf2_);
+      message_filter_ = std::make_unique<MessageFilter>(
+        sub_, *tf2_, target_frame_, input_queue_size_,
+        this->get_node_logging_interface(),
+        this->get_node_clock_interface());
+      message_filter_->registerCallback(
+        std::bind(&PointCloudToLaserScanNode::cloudCallback, this, _1));
+    } else {  // otherwise setup direct subscription
+      sub_.registerCallback(std::bind(&PointCloudToLaserScanNode::cloudCallback, this, _1));
+    }
+  } else {
+    // For custom (quantized) message
+    RCLCPP_INFO(
+      this->get_logger(),
+      "Quantized enabled: subscribing to CustomPointCloud2 on 'cloud_in'.");
+
+    // We do not use message_filter_ here, so we'll handle transform in code
+    // by manually converting the custom cloud to a standard PointCloud2, then calling tf2_->transform.
     tf2_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
     auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
       this->get_node_base_interface(), this->get_node_timers_interface());
     tf2_->setCreateTimerInterface(timer_interface);
     tf2_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf2_);
-    message_filter_ = std::make_unique<MessageFilter>(
-      sub_, *tf2_, target_frame_, input_queue_size_,
-      this->get_node_logging_interface(),
-      this->get_node_clock_interface());
-    message_filter_->registerCallback(
-      std::bind(&PointCloudToLaserScanNode::cloudCallback, this, _1));
-  } else {  // otherwise setup direct subscription
-    sub_.registerCallback(std::bind(&PointCloudToLaserScanNode::cloudCallback, this, _1));
+
+    sub_custom_ = this->create_subscription<e3_custom_messages::msg::CustomPointCloud2>(
+      "cloud_in_custom",
+      rclcpp::SensorDataQoS(),
+      std::bind(&PointCloudToLaserScanNode::cloudCallbackCustom, this, _1)
+    );
   }
 
+  
   subscription_listener_thread_ = std::thread(
     std::bind(&PointCloudToLaserScanNode::subscriptionListenerThreadLoop, this));
 }
@@ -109,31 +137,63 @@ PointCloudToLaserScanNode::~PointCloudToLaserScanNode()
 void PointCloudToLaserScanNode::subscriptionListenerThreadLoop()
 {
   rclcpp::Context::SharedPtr context = this->get_node_base_interface()->get_context();
-
   const std::chrono::milliseconds timeout(100);
-  while (rclcpp::ok(context) && alive_.load()) {
-    int subscription_count = pub_->get_subscription_count() +
+
+  while (rclcpp::ok(context) && alive_.load())
+  {
+    // How many subscribers are listening to our LaserScan output?
+    int subscription_count =
+      pub_->get_subscription_count() +
       pub_->get_intra_process_subscription_count();
-    if (subscription_count > 0) {
-      if (!sub_.getSubscriber()) {
-        RCLCPP_INFO(
-          this->get_logger(),
-          "Got a subscriber to laserscan, starting pointcloud subscriber");
-        rclcpp::SensorDataQoS qos;
-        qos.keep_last(input_queue_size_);
-        sub_.subscribe(this, "cloud_in", qos.get_rmw_qos_profile());
+
+    // ----------------------------------------
+    // Only manage sub_ if quantization is DISABLED
+    // ----------------------------------------
+    if (!quantized_enabled_)
+    {
+      if (subscription_count > 0)
+      {
+        // If we have LaserScan subscribers but sub_ is not active, subscribe now
+        if (!sub_.getSubscriber())
+        {
+          RCLCPP_INFO(
+            this->get_logger(),
+            "Got a subscriber to laserscan, starting pointcloud subscriber (standard PC2)."
+          );
+          rclcpp::SensorDataQoS qos;
+          qos.keep_last(input_queue_size_);
+          sub_.subscribe(this, "cloud_in", qos.get_rmw_qos_profile());
+        }
       }
-    } else if (sub_.getSubscriber()) {
-      RCLCPP_INFO(
-        this->get_logger(),
-        "No subscribers to laserscan, shutting down pointcloud subscriber");
-      sub_.unsubscribe();
+      else
+      {
+        // No LaserScan subscribers => no need to keep sub_ subscribed
+        if (sub_.getSubscriber())
+        {
+          RCLCPP_INFO(
+            this->get_logger(),
+            "No subscribers to laserscan, shutting down pointcloud subscriber (standard PC2)."
+          );
+          sub_.unsubscribe();
+        }
+      }
     }
+    // ----------------------------------------
+    // If quantized_enabled_ == true, do nothing with sub_ here
+    // ----------------------------------------
+
+    // Wait briefly for graph changes
     rclcpp::Event::SharedPtr event = this->get_graph_event();
     this->wait_for_graph_change(event, timeout);
   }
-  sub_.unsubscribe();
+
+  // When shutting down, if we used sub_, unsubscribe
+  if (!quantized_enabled_)
+  {
+    sub_.unsubscribe();
+  }
 }
+
 
 void PointCloudToLaserScanNode::cloudCallback(
   sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud_msg)
@@ -252,6 +312,162 @@ void PointCloudToLaserScanNode::cloudCallback(
   pub_->publish(std::move(scan_msg));
 
   // To Calculate Network Latency
+  TRACEPOINT(
+    robotperf_msg_published_2,
+    static_cast<const void *>(this),
+    static_cast<const void *>(&scan_msg),
+    unique_key);
+}
+
+
+//-----------------------------------------------------------
+// cloudCallbackCustom: for e3_custom_messages::CustomPointCloud2
+//-----------------------------------------------------------
+void PointCloudToLaserScanNode::cloudCallbackCustom(
+  e3_custom_messages::msg::CustomPointCloud2::ConstSharedPtr cloud_msg)
+{
+  uint32_t unique_key = cloud_msg->header.stamp.nanosec;
+  TRACEPOINT(
+    robotperf_msg_received_1,
+    static_cast<const void *>(this),
+    static_cast<const void *>(cloud_msg.get()),
+    unique_key);
+
+  //------------------------------------------
+  // 1) Convert custom cloud -> sensor_msgs::PointCloud2 (float32)
+  //------------------------------------------
+  // Create a new "standard" pointcloud to hold the float32 data
+  auto temp_cloud = std::make_shared<sensor_msgs::msg::PointCloud2>();
+  temp_cloud->header = cloud_msg->header;  // same timestamp, frame
+  temp_cloud->height = cloud_msg->height;
+  temp_cloud->width  = cloud_msg->width;
+  temp_cloud->is_bigendian = cloud_msg->is_bigendian; 
+  temp_cloud->is_dense = cloud_msg->is_dense;
+
+  // We'll have 3 fields: x,y,z => each float32 (4 bytes)
+  temp_cloud->fields.resize(3);
+  temp_cloud->fields[0].name = "x";
+  temp_cloud->fields[0].offset = 0;
+  temp_cloud->fields[0].datatype = sensor_msgs::msg::PointField::FLOAT32;
+  temp_cloud->fields[0].count = 1;
+
+  temp_cloud->fields[1].name = "y";
+  temp_cloud->fields[1].offset = 4;
+  temp_cloud->fields[1].datatype = sensor_msgs::msg::PointField::FLOAT32;
+  temp_cloud->fields[1].count = 1;
+
+  temp_cloud->fields[2].name = "z";
+  temp_cloud->fields[2].offset = 8;
+  temp_cloud->fields[2].datatype = sensor_msgs::msg::PointField::FLOAT32;
+  temp_cloud->fields[2].count = 1;
+
+  // So each point is 12 bytes
+  temp_cloud->point_step = 12;
+  temp_cloud->row_step = temp_cloud->point_step * temp_cloud->width;
+  size_t total_points = temp_cloud->width * temp_cloud->height;
+  temp_cloud->data.resize(temp_cloud->row_step * temp_cloud->height);
+
+  // We'll interpret the data array as float*
+  float * out_ptr = reinterpret_cast<float*>(temp_cloud->data.data());
+
+  // The custom data is int16 for x,y,z at offsets 0,2,4 => total 6 bytes
+  // We'll also assume scale=100 => 1 int16 step = 0.01 m
+  float scale = 100.0f;
+  const int16_t* in_data = reinterpret_cast<const int16_t*>(cloud_msg->data.data());
+
+  for (size_t i = 0; i < total_points; i++) {
+    int16_t x_int = in_data[3*i + 0];
+    int16_t y_int = in_data[3*i + 1];
+    int16_t z_int = in_data[3*i + 2];
+
+    float x = x_int / scale;
+    float y = y_int / scale;
+    float z = z_int / scale;
+
+    // store in out_ptr: each point => x,y,z float
+    // index in out_ptr => 3*i + 0 => x, +1 => y, +2 => z
+    out_ptr[3*i + 0] = x;
+    out_ptr[3*i + 1] = y;
+    out_ptr[3*i + 2] = z;
+  }
+
+  //------------------------------------------
+  // 2) Transform the newly created float32 cloud to target_frame_
+  //------------------------------------------
+  if (!target_frame_.empty() && (temp_cloud->header.frame_id != target_frame_)) {
+    try {
+      auto transformed = std::make_shared<sensor_msgs::msg::PointCloud2>();
+      tf2_->transform(*temp_cloud, *transformed, target_frame_, tf2::durationFromSec(tolerance_));
+      temp_cloud = transformed;
+    } catch (tf2::TransformException & ex) {
+      RCLCPP_ERROR_STREAM(this->get_logger(), "Transform failure (custom): " << ex.what());
+      return;
+    }
+  }
+
+  //------------------------------------------
+  // 3) Generate LaserScan from the transformed cloud
+  //------------------------------------------
+  auto scan_msg = std::make_unique<sensor_msgs::msg::LaserScan>();
+  scan_msg->header = temp_cloud->header;  // now in target_frame_ if that was set
+
+  scan_msg->angle_min = angle_min_;
+  scan_msg->angle_max = angle_max_;
+  scan_msg->angle_increment = angle_increment_;
+  scan_msg->time_increment = 0.0f;
+  scan_msg->scan_time = static_cast<float>(scan_time_);
+  scan_msg->range_min = static_cast<float>(range_min_);
+  scan_msg->range_max = static_cast<float>(range_max_);
+
+  uint32_t ranges_size = static_cast<uint32_t>(
+    std::ceil((scan_msg->angle_max - scan_msg->angle_min)/scan_msg->angle_increment));
+
+  if (use_inf_) {
+    scan_msg->ranges.assign(ranges_size, std::numeric_limits<float>::infinity());
+  } else {
+    scan_msg->ranges.assign(ranges_size, scan_msg->range_max + inf_epsilon_);
+  }
+
+  // iterate over the float32 data
+  sensor_msgs::PointCloud2ConstIterator<float> iter_x(*temp_cloud, "x");
+  sensor_msgs::PointCloud2ConstIterator<float> iter_y(*temp_cloud, "y");
+  sensor_msgs::PointCloud2ConstIterator<float> iter_z(*temp_cloud, "z");
+
+  for (; iter_x != iter_x.end(); ++iter_x, ++iter_y, ++iter_z) {
+    float x_val = *iter_x;
+    float y_val = *iter_y;
+    float z_val = *iter_z;
+
+    if (std::isnan(x_val) || std::isnan(y_val) || std::isnan(z_val)) {
+      continue;
+    }
+    if (z_val > max_height_ || z_val < min_height_) {
+      continue;
+    }
+    double range = std::hypot(x_val, y_val);
+    if (range < range_min_ || range > range_max_) {
+      continue;
+    }
+    double angle = std::atan2(y_val, x_val);
+    if (angle < scan_msg->angle_min || angle > scan_msg->angle_max) {
+      continue;
+    }
+    int index = static_cast<int>((angle - scan_msg->angle_min)/scan_msg->angle_increment);
+    if ((index >= 0) && (index < static_cast<int>(ranges_size))) {
+      if (range < scan_msg->ranges[index]) {
+        scan_msg->ranges[index] = static_cast<float>(range);
+      }
+    }
+  }
+
+  TRACEPOINT(
+    robotperf_msg_published_1,
+    static_cast<const void *>(this),
+    static_cast<const void *>(&scan_msg),
+    unique_key);
+
+  pub_->publish(std::move(scan_msg));
+
   TRACEPOINT(
     robotperf_msg_published_2,
     static_cast<const void *>(this),

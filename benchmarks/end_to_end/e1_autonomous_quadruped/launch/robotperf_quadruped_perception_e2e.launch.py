@@ -16,6 +16,13 @@ from tracetools_trace.tools.names import DEFAULT_CONTEXT
 
 def generate_launch_description():
 
+    # Declare quantization enabled argument
+    declare_quantization = DeclareLaunchArgument(
+        "quantization_enabled",
+        default_value="false",
+        description="Enable IEEE 754 float16 quantization (true/false). Applies only to IMU, AMCL Pose, LaserScan, and PointCloud2."
+    )
+
     trace = Trace(
         session_name= 'quadruped_control_test',
         events_ust=[
@@ -104,14 +111,16 @@ def generate_launch_description():
         package="e1_autonomous_quadruped",
         executable="pointcloud_input_component_node",
         name="pointcloud_input_component",
-        parameters=[
-            {"input_topic_name": "/robotperf/benchmark/velodyne_points"}
-        ],
+        parameters=[{
+            "input_topic_name": "/robotperf/benchmark/velodyne_points",
+            "quantization_enabled": LaunchConfiguration("quantization_enabled")
+        }],
         remappings=[
             ("cloud", "/velodyne_points"),
         ],
         output="screen",
     )
+
 
     # Run PointCloud-to-LaserScan Node as a separate process
     laserscan_node = Node(
@@ -121,14 +130,17 @@ def generate_launch_description():
         name='pointcloud_to_laserscan',
         remappings=[
             ('cloud_in', '/robotperf/benchmark/velodyne_points'),
+            ('cloud_in_custom', '/robotperf/benchmark/velodyne_points_custom'),
             ('scan', '/robotperf/benchmark/scan')
         ],
         parameters=[{
             'scan_time': 0.000000001,
-            'qos': {'reliability': 'best_effort', 'durability': 'transient_local'}
+            'qos': {'reliability': 'best_effort', 'durability': 'transient_local'},
+            "quantization_enabled": LaunchConfiguration("quantization_enabled")
         }],
         output="screen",
     )
+
 
     # Run LaserScan Input Node as a separate process
     laserscan_input_node = Node(
@@ -147,9 +159,11 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     # Add the tracing tool and all separate nodes
+    ld.add_action(declare_quantization)
     ld.add_action(trace)
     ld.add_action(pointcloud_input_node)
     ld.add_action(laserscan_node)
     ld.add_action(laserscan_input_node)
+
 
     return ld

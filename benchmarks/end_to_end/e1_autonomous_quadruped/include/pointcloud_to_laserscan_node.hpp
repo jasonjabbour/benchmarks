@@ -55,6 +55,9 @@
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
 
+// Custom message type
+#include "e3_custom_messages/msg/custom_point_cloud2.hpp"
+
 #include "visibility_control.h"
 
 namespace pointcloud_to_laserscan
@@ -74,13 +77,22 @@ public:
   ~PointCloudToLaserScanNode() override;
 
 private:
+  // Call back for regular point cloud message
   void cloudCallback(sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud_msg);
+  // Callback for the custom point cloud
+  void cloudCallbackCustom(e3_custom_messages::msg::CustomPointCloud2::ConstSharedPtr cloud_msg);
+
 
   void subscriptionListenerThreadLoop();
 
   std::unique_ptr<tf2_ros::Buffer> tf2_;
   std::unique_ptr<tf2_ros::TransformListener> tf2_listener_;
+
+  // Subscriber for regular pointcloud message type
   message_filters::Subscriber<sensor_msgs::msg::PointCloud2> sub_;
+  // Subscriber for custom pointcloud message type
+  rclcpp::Subscription<e3_custom_messages::msg::CustomPointCloud2>::SharedPtr sub_custom_;
+
   std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::LaserScan>> pub_;
   std::unique_ptr<MessageFilter> message_filter_;
 
@@ -88,6 +100,7 @@ private:
   std::atomic_bool alive_{true};
 
   // ROS Parameters
+  bool quantized_enabled_; // Enable or disable custom pointcloud message
   int input_queue_size_;
   std::string target_frame_;
   double tolerance_;
