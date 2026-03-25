@@ -29,6 +29,7 @@ find_package(tf2_sensor_msgs REQUIRED)
 find_package(urdf REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(pointcloud_to_laserscan REQUIRED)
+find_package(e3_custom_messages)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -185,6 +186,12 @@ install(
   DIRECTORY include/
   DESTINATION include
   FILES_MATCHING PATTERN "*.hpp"
+)
+
+# TODO: REFACTOR THIS AND REMOVE FROM PACKAGE
+install(PROGRAMS
+  launch/scene_generation.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_auto_package(INSTALL_TO_SHARE launch)

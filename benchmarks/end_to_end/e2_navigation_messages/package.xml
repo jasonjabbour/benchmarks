@@ -36,6 +36,8 @@
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>  
   <depend>e3_custom_messages</depend>
+  <depend>champ</depend>
+  <depend>champ_msgs</depend>
 
 
   <build_depend>urdf</build_depend>
