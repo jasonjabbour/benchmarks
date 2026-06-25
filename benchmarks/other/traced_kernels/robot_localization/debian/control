@@ -1,0 +1,12 @@
+Source: ros-humble-robot-localization
+Section: misc
+Priority: optional
+Maintainer: Tom Moore <ayrton04@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), libboost-dev, libeigen3-dev, libgeographic-dev, ros-humble-ament-cmake, ros-humble-ament-cmake-gtest <!nocheck>, ros-humble-ament-lint-auto <!nocheck>, ros-humble-ament-lint-common <!nocheck>, ros-humble-angles, ros-humble-builtin-interfaces, ros-humble-builtin-interfaces <!nocheck>, ros-humble-diagnostic-msgs, ros-humble-diagnostic-updater, ros-humble-geographic-msgs, ros-humble-geometry-msgs, ros-humble-launch-ros <!nocheck>, ros-humble-launch-testing-ament-cmake <!nocheck>, ros-humble-message-filters, ros-humble-nav-msgs, ros-humble-rclcpp, ros-humble-rmw-implementation, ros-humble-rosidl-default-generators, ros-humble-sensor-msgs, ros-humble-std-msgs, ros-humble-std-srvs, ros-humble-tf2, ros-humble-tf2-eigen, ros-humble-tf2-geometry-msgs, ros-humble-tf2-ros, ros-humble-yaml-cpp-vendor, ros-humble-ros-workspace, ros-humble-rosidl-typesupport-fastrtps-c, ros-humble-rosidl-typesupport-fastrtps-cpp
+Homepage: http://ros.org/wiki/robot_localization
+Standards-Version: 3.9.2
+
+Package: ros-humble-robot-localization
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libboost-dev, libeigen3-dev, libgeographic-dev, ros-humble-angles, ros-humble-diagnostic-msgs, ros-humble-diagnostic-updater, ros-humble-geographic-msgs, ros-humble-geometry-msgs, ros-humble-message-filters, ros-humble-nav-msgs, ros-humble-rclcpp, ros-humble-rmw-implementation, ros-humble-rosidl-default-runtime, ros-humble-sensor-msgs, ros-humble-std-msgs, ros-humble-std-srvs, ros-humble-tf2, ros-humble-tf2-eigen, ros-humble-tf2-geometry-msgs, ros-humble-tf2-ros, ros-humble-yaml-cpp-vendor, ros-humble-ros-workspace
+Description: Provides nonlinear state estimation through sensor fusion of an abritrary number of sensors.

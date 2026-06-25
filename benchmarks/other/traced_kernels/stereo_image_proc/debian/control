@@ -1,0 +1,12 @@
+Source: ros-humble-stereo-image-proc
+Section: misc
+Priority: optional
+Maintainer: Vincent Rabaud <vincent.rabaud@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), python3-opencv <!nocheck>, ros-humble-ament-cmake-auto, ros-humble-ament-cmake-pytest <!nocheck>, ros-humble-ament-lint-auto <!nocheck>, ros-humble-ament-lint-common <!nocheck>, ros-humble-cv-bridge, ros-humble-image-geometry, ros-humble-image-proc, ros-humble-image-transport, ros-humble-launch <!nocheck>, ros-humble-launch-ros <!nocheck>, ros-humble-launch-testing <!nocheck>, ros-humble-launch-testing-ament-cmake <!nocheck>, ros-humble-message-filters, ros-humble-python-cmake-module <!nocheck>, ros-humble-rclcpp, ros-humble-rclcpp-components, ros-humble-rclpy <!nocheck>, ros-humble-ros-testing <!nocheck>, ros-humble-sensor-msgs, ros-humble-stereo-msgs, ros-humble-ros-workspace
+Homepage: https://index.ros.org/p/stereo_image_proc/
+Standards-Version: 3.9.2
+
+Package: ros-humble-stereo-image-proc
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-humble-cv-bridge, ros-humble-image-geometry, ros-humble-image-proc, ros-humble-image-transport, ros-humble-message-filters, ros-humble-rclcpp, ros-humble-rclcpp-components, ros-humble-sensor-msgs, ros-humble-stereo-msgs, ros-humble-ros-workspace
+Description: Stereo and single image rectification and disparity processing.

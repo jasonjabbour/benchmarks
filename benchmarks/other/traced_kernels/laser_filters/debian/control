@@ -1,0 +1,12 @@
+Source: ros-humble-laser-filters
+Section: misc
+Priority: optional
+Maintainer: Jon Binney <jon.binney@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-humble-ament-cmake-auto, ros-humble-ament-cmake-gtest <!nocheck>, ros-humble-angles, ros-humble-diagnostic-msgs, ros-humble-diagnostic-updater, ros-humble-filters, ros-humble-laser-geometry, ros-humble-launch-testing-ament-cmake <!nocheck>, ros-humble-message-filters, ros-humble-pluginlib, ros-humble-rclcpp, ros-humble-rclcpp-components, ros-humble-rclcpp-lifecycle, ros-humble-sensor-msgs, ros-humble-tf2, ros-humble-tf2-geometry-msgs, ros-humble-tf2-kdl, ros-humble-tf2-ros, ros-humble-ros-workspace
+Homepage: http://ros.org/wiki/laser_filters
+Standards-Version: 3.9.2
+
+Package: ros-humble-laser-filters
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-humble-angles, ros-humble-diagnostic-msgs, ros-humble-diagnostic-updater, ros-humble-filters, ros-humble-laser-geometry, ros-humble-message-filters, ros-humble-pluginlib, ros-humble-rclcpp, ros-humble-rclcpp-components, ros-humble-rclcpp-lifecycle, ros-humble-sensor-msgs, ros-humble-tf2, ros-humble-tf2-geometry-msgs, ros-humble-tf2-kdl, ros-humble-tf2-ros, ros-humble-ros-workspace
+Description: Assorted filters designed to operate on 2D planar laser scanners, which use the sensor_msgs/LaserScan type.

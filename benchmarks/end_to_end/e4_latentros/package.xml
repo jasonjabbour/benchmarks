@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>e4_latentros</name>
+  <version>0.0.0</version>
+  <description>LatentROS workload characterization: grey-box benchmarks across the full autonomous quadruped navigation stack.</description>
+  <maintainer email="todo@todo.com">LatentROS</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>tracetools_benchmark</depend>
+  <depend>tracetools_launch</depend>
+  <depend>tracetools_analysis</depend>
+  <depend>benchmark_utilities</depend>
+
+  <!-- Message types for new components -->
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>stereo_msgs</depend>
+
+  <!-- Rosbag playback -->
+  <depend>ros2bag</depend>
+  <depend>rosbag2_transport</depend>
+
+  <!-- e1 components used for input/output tracing -->
+  <exec_depend>e1_autonomous_quadruped</exec_depend>
+
+  <!-- Kernel packages (runtime only) -->
+  <exec_depend>champ_base</exec_depend>
+  <exec_depend>champ_config</exec_depend>
+  <exec_depend>champ_description</exec_depend>
+  <exec_depend>go2_config</exec_depend>
+  <exec_depend>go2_description</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>nav2_amcl</exec_depend>
+  <exec_depend>nav2_costmap_2d</exec_depend>
+  <exec_depend>nav2_planner</exec_depend>
+  <exec_depend>nav2_controller</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>nav2_msgs</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>pointcloud_to_laserscan</exec_depend>
+
+  <!-- Perception kernel packages -->
+  <exec_depend>a1_perception_2nodes</exec_depend>
+  <exec_depend>image_proc</exec_depend>
+  <exec_depend>depthimage_to_laserscan</exec_depend>
+  <exec_depend>stereo_image_proc</exec_depend>
+  <exec_depend>depth_image_proc</exec_depend>
+  <exec_depend>laser_filters</exec_depend>
+  <exec_depend>laser_geometry</exec_depend>
+
+  <!-- Python deps for action client scripts -->
+  <exec_depend>rclpy</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

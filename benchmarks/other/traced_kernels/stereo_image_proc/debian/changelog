@@ -1,0 +1,265 @@
+ros-humble-stereo-image-proc (3.0.9-1jammy) jammy; urgency=high
+
+  * Update index.ros.org package website links (backport #1101 <https://github.com/ros-perception/image_pipeline//issues/1101>) (#1105 <https://github.com/ros-perception/image_pipeline//issues/1105>)
+  * Contributors: mergify[bot]
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Mon, 08 Dec 2025 23:00:00 -0000
+
+ros-humble-stereo-image-proc (3.0.8-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Mon, 21 Apr 2025 22:00:00 -0000
+
+ros-humble-stereo-image-proc (3.0.7-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Wed, 26 Feb 2025 23:00:00 -0000
+
+ros-humble-stereo-image-proc (3.0.6-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Mon, 19 Aug 2024 22:00:00 -0000
+
+ros-humble-stereo-image-proc (3.0.5-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Tue, 23 Jul 2024 22:00:00 -0000
+
+ros-humble-stereo-image-proc (3.0.4-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Thu, 29 Feb 2024 23:00:00 -0000
+
+ros-humble-stereo-image-proc (3.0.3-1jammy) jammy; urgency=high
+
+  * [backport humble] stereo_image_proc: cleanup cmake (#904 <https://github.com/ros-perception/image_pipeline/issues/904>) (#907 <https://github.com/ros-perception/image_pipeline/issues/907>)
+    This was supposed to be switched over when e-turtle rolled out. J-turtle
+    ain't that late...
+    Backported https://github.com/ros-perception/image_pipeline/pull/904
+    Co-authored-by: Michael Ferguson <mailto:mfergs7@gmail.com>
+  * [backport humble] upport rgba8 and bgra8 encodings by skipping alpha channel (#869 <https://github.com/ros-perception/image_pipeline/issues/869>) (#895 <https://github.com/ros-perception/image_pipeline/issues/895>)
+    backport #869 <https://github.com/ros-perception/image_pipeline/issues/869>
+  * allow use as component or node (#859 <https://github.com/ros-perception/image_pipeline/issues/859>)
+    backport #852 <https://github.com/ros-perception/image_pipeline/issues/852> to humble
+  * Contributors: Alejandro Hernández Cordero, Michael Ferguson
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sun, 23 Jan 2022 23:00:00 -0000
+
+ros-humble-stereo-image-proc (3.0.2-1jammy) jammy; urgency=high
+
+  * Forward container namespace from stereo_image_proc -> image_proc (#752 <https://github.com/ros-perception/image_pipeline/issues/752>)
+  * Contributors: Brian
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sun, 16 Jan 2022 23:00:00 -0000
+
+ros-humble-stereo-image-proc (3.0.0-1jammy) jammy; urgency=high
+
+  * Fix the tests for stereo_image_proc.
+  * Cleanup stereo_image_proc
+  * Populate CameraInfo camera matrix in test fixture
+  * Use with_default_policies
+  * Improve formatting
+  * Use SubscriptionOptions
+  * Add subscriber qos overrides
+  * Remove QosPolicyKind::Invalid
+  * Allow QoS overrides for publishers
+  * Add missing test dependency
+  * Add color param to stereo_image_proc (#661 <https://github.com/ros-perception/image_pipeline/issues/661>)
+  * changes per comments
+  * fix for stereo_image_proc_tests
+  * Add maintainer (#667 <https://github.com/ros-perception/image_pipeline/issues/667>)
+  * Add disparity node parameters to launch file
+  * Fix disparity node parameter name
+  * Expose avoid_point_cloud_padding parameter in stereo_image_proc launch file (#599 <https://github.com/ros-perception/image_pipeline/issues/599>)
+  * Refactor image_proc and stereo_image_proc launch files (#583 <https://github.com/ros-perception/image_pipeline/issues/583>)
+  * Contributors: Audrow Nash, Chris Lalancette, Jacob Perron, Patrick Musau, Rebecca Butler
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Thu, 28 Apr 2022 22:00:00 -0000
+
+ros-humble-stereo-image-proc (2.2.1-1jammy) jammy; urgency=high
+
+  * remove email blasts from steve macenski (#596 <https://github.com/ros-perception/image_pipeline/issues/596>)
+  * Refactor stereo_image_proc tests (#588 <https://github.com/ros-perception/image_pipeline/issues/588>)
+  * [Foxy] Use ament_auto Macros (#573 <https://github.com/ros-perception/image_pipeline/issues/573>)
+  * Contributors: Jacob Perron, Joshua Whitley, Steve Macenski
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Wed, 26 Aug 2020 22:00:00 -0000
+
+ros-humble-stereo-image-proc (2.2.0-1jammy) jammy; urgency=high
+
+  * Replacing deprecated header includes with new HPP versions. (#566 <https://github.com/ros-perception/image_pipeline/issues/566>)
+  * Use newer 'add_on_set_parameters_callback' API (#562 <https://github.com/ros-perception/image_pipeline/issues/562>)
+    The old API was deprecated in Foxy and since removed in https://github.com/ros2/rclcpp/pull/1199.
+  * Contributors: Jacob Perron, Joshua Whitley
+  * Initial ROS2 commit.
+  * Contributors: Michael Carroll
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sun, 26 Jul 2020 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.23-1jammy) jammy; urgency=high
+
+  * Removed unused mutable scratch buffers (#315 <https://github.com/ros-perception/image_pipeline/issues/315>)
+    The uint32_t buffers conflicted with newer release of OpenCV3, as explained here https://github.com/ros-perception/image_pipeline/issues/310
+  * Contributors: Miquel Massot
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Wed, 09 May 2018 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.22-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Thu, 07 Dec 2017 23:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.21-1jammy) jammy; urgency=high
+
+  * Updated fix for traits change. (#303 <https://github.com/ros-perception/image_pipeline/issues/303>)
+  * Fix C++11 compilation
+    This fixes #292 <https://github.com/ros-perception/image_pipeline/issues/292> and #291 <https://github.com/ros-perception/image_pipeline/issues/291>
+  * Contributors: Mike Purvis, Vincent Rabaud
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 04 Nov 2017 23:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.20-1jammy) jammy; urgency=high
+
+  * fix doc jobs
+    This is a proper fix for #233 <https://github.com/ros-perception/image_pipeline/issues/233>
+  * address gcc6 build error
+    With gcc6, compiling fails with stdlib.h: No such file or directory,
+    as including '-isystem /usr/include' breaks with gcc6, cf.,
+    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70129.
+    This commit addresses this issue for this package in the same way
+    it was addressed in various other ROS packages. A list of related
+    commits and pull requests is at:
+    https://github.com/ros/rosdistro/issues/12783
+    Signed-off-by: Lukas Bulwahn <mailto:lukas.bulwahn@oss.bmw-carit.de>
+  * Contributors: Lukas Bulwahn, Vincent Rabaud
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 29 Apr 2017 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.19-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 23 Jul 2016 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.18-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Mon, 11 Jul 2016 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.17-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sun, 10 Jul 2016 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.16-1jammy) jammy; urgency=high
+
+  * clean OpenCV dependency in package.xml
+  * Contributors: Vincent Rabaud
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Fri, 18 Mar 2016 23:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.15-1jammy) jammy; urgency=high
+
+  * simplify OpenCV3 conversion
+  * Contributors: Vincent Rabaud
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 16 Jan 2016 23:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.14-1jammy) jammy; urgency=high
+
+  * add StereoSGBM and it can be chosen from dynamic_reconfigure
+  * Contributors: Ryohei Ueda
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Tue, 21 Jul 2015 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.13-1jammy) jammy; urgency=high
+
+  * get code to compile with OpenCV3
+  * modify pointcloud data format of stereo_image_proc using point_cloud2_iterator
+  * Contributors: Hiroaki Yaguchi, Vincent Rabaud
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sun, 05 Apr 2015 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.12-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Tue, 30 Dec 2014 23:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.11-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 25 Oct 2014 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.10-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 27 Sep 2014 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.9-1jammy) jammy; urgency=high
+
+  * get code to compile with OpenCV3
+    fixes #96 <https://github.com/ros-perception/image_pipeline/issues/96>
+  * Contributors: Vincent Rabaud
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 20 Sep 2014 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.8-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Mon, 18 Aug 2014 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.6-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 26 Jul 2014 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.4-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sun, 27 Apr 2014 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.3-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Fri, 11 Apr 2014 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.2-1jammy) jammy; urgency=high
+
+
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Mon, 07 Apr 2014 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.12.0-1jammy) jammy; urgency=high
+
+  * remove PointCloud1 nodelets
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Thu, 03 Apr 2014 22:00:00 -0000
+
+ros-humble-stereo-image-proc (1.11.5-1jammy) jammy; urgency=high
+
+  * fix compilation on OSX (#50)
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 07 Dec 2013 13:42:55 +0100
+
+ros-humble-stereo-image-proc (1.11.4-1jammy) jammy; urgency=high
+
+  * convert images to MONO8 when computing disparity if needed (#49)
+
+ -- Vincent Rabaud <vincent.rabaud@gmail.com>  Sat, 23 Nov 2013 13:10:55 +0100
+
+

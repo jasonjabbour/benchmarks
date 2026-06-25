@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!-- Minimal GO2 URDF for ros2_control benchmark with mock hardware.
+     Only joint definitions and ros2_control interfaces — no meshes. -->
+<robot name="go2_benchmark">
+  <link name="base_link">
+    <inertial><mass value="1.0"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/></inertial>
+  </link>
+
+  <!-- ============ Left Front ============ -->
+  <link name="lf_hip_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="lf_hip_joint" type="revolute">
+    <parent link="base_link"/><child link="lf_hip_link"/>
+    <axis xyz="1 0 0"/><limit lower="-1.0" upper="1.0" effort="100" velocity="10"/>
+  </joint>
+  <link name="lf_upper_leg_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="lf_upper_leg_joint" type="revolute">
+    <parent link="lf_hip_link"/><child link="lf_upper_leg_link"/>
+    <axis xyz="0 1 0"/><limit lower="-2.0" upper="2.0" effort="100" velocity="10"/>
+  </joint>
+  <link name="lf_lower_leg_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="lf_lower_leg_joint" type="revolute">
+    <parent link="lf_upper_leg_link"/><child link="lf_lower_leg_link"/>
+    <axis xyz="0 1 0"/><limit lower="-2.0" upper="2.0" effort="100" velocity="10"/>
+  </joint>
+
+  <!-- ============ Right Front ============ -->
+  <link name="rf_hip_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="rf_hip_joint" type="revolute">
+    <parent link="base_link"/><child link="rf_hip_link"/>
+    <axis xyz="1 0 0"/><limit lower="-1.0" upper="1.0" effort="100" velocity="10"/>
+  </joint>
+  <link name="rf_upper_leg_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="rf_upper_leg_joint" type="revolute">
+    <parent link="rf_hip_link"/><child link="rf_upper_leg_link"/>
+    <axis xyz="0 1 0"/><limit lower="-2.0" upper="2.0" effort="100" velocity="10"/>
+  </joint>
+  <link name="rf_lower_leg_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="rf_lower_leg_joint" type="revolute">
+    <parent link="rf_upper_leg_link"/><child link="rf_lower_leg_link"/>
+    <axis xyz="0 1 0"/><limit lower="-2.0" upper="2.0" effort="100" velocity="10"/>
+  </joint>
+
+  <!-- ============ Left Hind ============ -->
+  <link name="lh_hip_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="lh_hip_joint" type="revolute">
+    <parent link="base_link"/><child link="lh_hip_link"/>
+    <axis xyz="1 0 0"/><limit lower="-1.0" upper="1.0" effort="100" velocity="10"/>
+  </joint>
+  <link name="lh_upper_leg_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="lh_upper_leg_joint" type="revolute">
+    <parent link="lh_hip_link"/><child link="lh_upper_leg_link"/>
+    <axis xyz="0 1 0"/><limit lower="-2.0" upper="2.0" effort="100" velocity="10"/>
+  </joint>
+  <link name="lh_lower_leg_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="lh_lower_leg_joint" type="revolute">
+    <parent link="lh_upper_leg_link"/><child link="lh_lower_leg_link"/>
+    <axis xyz="0 1 0"/><limit lower="-2.0" upper="2.0" effort="100" velocity="10"/>
+  </joint>
+
+  <!-- ============ Right Hind ============ -->
+  <link name="rh_hip_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="rh_hip_joint" type="revolute">
+    <parent link="base_link"/><child link="rh_hip_link"/>
+    <axis xyz="1 0 0"/><limit lower="-1.0" upper="1.0" effort="100" velocity="10"/>
+  </joint>
+  <link name="rh_upper_leg_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="rh_upper_leg_joint" type="revolute">
+    <parent link="rh_hip_link"/><child link="rh_upper_leg_link"/>
+    <axis xyz="0 1 0"/><limit lower="-2.0" upper="2.0" effort="100" velocity="10"/>
+  </joint>
+  <link name="rh_lower_leg_link"><inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial></link>
+  <joint name="rh_lower_leg_joint" type="revolute">
+    <parent link="rh_upper_leg_link"/><child link="rh_lower_leg_link"/>
+    <axis xyz="0 1 0"/><limit lower="-2.0" upper="2.0" effort="100" velocity="10"/>
+  </joint>
+
+  <!-- ============ ros2_control with Mock Hardware ============ -->
+  <ros2_control name="go2_benchmark" type="system">
+    <hardware>
+      <plugin>mock_components/GenericSystem</plugin>
+      <param name="mock_sensor_commands">false</param>
+    </hardware>
+    <joint name="lf_hip_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="lf_upper_leg_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="lf_lower_leg_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="rf_hip_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="rf_upper_leg_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="rf_lower_leg_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="lh_hip_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="lh_upper_leg_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="lh_lower_leg_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="rh_hip_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="rh_upper_leg_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="rh_lower_leg_joint"><command_interface name="effort"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+  </ros2_control>
+</robot>
