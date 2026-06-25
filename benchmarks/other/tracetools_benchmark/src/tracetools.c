@@ -478,6 +478,85 @@ void TRACEPOINT(
         size_arg);
 }
 
+// ============================================================
+// LatentROS e4 tracepoints — function bodies
+// Standard 6-param signature: (node, msg, nsec, sec, size, key)
+// ============================================================
+
+#define DEFINE_STANDARD_TP(name) \
+void TRACEPOINT( \
+    name, \
+    const void * node_arg, \
+    const void * msg_arg, \
+    uint32_t header_nsec_arg, \
+    uint32_t header_sec_arg, \
+    size_t msg_size_arg, \
+    uint32_t key_arg) \
+{ \
+    CONDITIONAL_TP(name, node_arg, msg_arg, \
+        header_nsec_arg, header_sec_arg, msg_size_arg, key_arg); \
+}
+
+// odometry
+DEFINE_STANDARD_TP(robotperf_odometry_input_cb_init)
+DEFINE_STANDARD_TP(robotperf_odometry_input_cb_fini)
+DEFINE_STANDARD_TP(robotperf_odometry_output_cb_init)
+DEFINE_STANDARD_TP(robotperf_odometry_output_cb_fini)
+
+// pose_with_covariance
+DEFINE_STANDARD_TP(robotperf_pose_cov_input_cb_init)
+DEFINE_STANDARD_TP(robotperf_pose_cov_input_cb_fini)
+DEFINE_STANDARD_TP(robotperf_pose_cov_output_cb_init)
+DEFINE_STANDARD_TP(robotperf_pose_cov_output_cb_fini)
+
+// occupancy_grid
+DEFINE_STANDARD_TP(robotperf_occupancy_grid_output_cb_init)
+DEFINE_STANDARD_TP(robotperf_occupancy_grid_output_cb_fini)
+
+// joint_state
+DEFINE_STANDARD_TP(robotperf_joint_state_input_cb_init)
+DEFINE_STANDARD_TP(robotperf_joint_state_input_cb_fini)
+DEFINE_STANDARD_TP(robotperf_joint_state_output_cb_init)
+DEFINE_STANDARD_TP(robotperf_joint_state_output_cb_fini)
+
+// path
+DEFINE_STANDARD_TP(robotperf_path_input_cb_init)
+DEFINE_STANDARD_TP(robotperf_path_input_cb_fini)
+DEFINE_STANDARD_TP(robotperf_path_output_cb_init)
+DEFINE_STANDARD_TP(robotperf_path_output_cb_fini)
+
+// pose_stamped
+DEFINE_STANDARD_TP(robotperf_pose_stamped_input_cb_init)
+DEFINE_STANDARD_TP(robotperf_pose_stamped_input_cb_fini)
+
+// twist_output — 4-param signature (no header)
+void TRACEPOINT(
+    robotperf_twist_output_cb_init,
+    const void * node_arg,
+    const void * msg_arg,
+    size_t msg_size_arg,
+    uint32_t key_arg)
+{
+    CONDITIONAL_TP(robotperf_twist_output_cb_init,
+        node_arg, msg_arg, msg_size_arg, key_arg);
+}
+void TRACEPOINT(
+    robotperf_twist_output_cb_fini,
+    const void * node_arg,
+    const void * msg_arg,
+    size_t msg_size_arg,
+    uint32_t key_arg)
+{
+    CONDITIONAL_TP(robotperf_twist_output_cb_fini,
+        node_arg, msg_arg, msg_size_arg, key_arg);
+}
+
+// disparity
+DEFINE_STANDARD_TP(robotperf_disparity_output_cb_init)
+DEFINE_STANDARD_TP(robotperf_disparity_output_cb_fini)
+
+#undef DEFINE_STANDARD_TP
+
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #else

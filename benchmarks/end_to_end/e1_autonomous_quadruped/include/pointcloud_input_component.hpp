@@ -31,6 +31,7 @@ protected:
   uint32_t generate_unique_key();
 
   bool quantization_enabled_;
+  int target_msg_size_kb_;  // LatentROS: pad to real sensor size (0 = no padding)
 
   // Helper function to convert the incoming PointCloud2 to a custom "int16" version
   void convertPointCloud2ToCustom(

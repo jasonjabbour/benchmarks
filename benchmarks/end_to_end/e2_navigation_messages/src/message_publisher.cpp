@@ -469,11 +469,11 @@ void MessagePublisher::publish_message()
             RCLCPP_INFO(this->get_logger(), "Quantization is not applicable to image.");
         }
         auto msg = sensor_msgs::msg::Image();
-        msg.height = std::sqrt(message_size_);
-        msg.width = std::sqrt(message_size_);
-        msg.encoding = "rgb8";
-        msg.step = msg.width * 3;
-        msg.data.resize(msg.height * msg.step, 255);
+        msg.height = message_size_;
+        msg.width = 1;
+        msg.encoding = "mono8";
+        msg.step = msg.width * 1;
+        msg.data.resize(msg.height * msg.step, 128);
         msg.header.stamp = this->now();
         msg.header.stamp.nanosec = unique_key;
         size_t msg_size = get_msg_size(msg);

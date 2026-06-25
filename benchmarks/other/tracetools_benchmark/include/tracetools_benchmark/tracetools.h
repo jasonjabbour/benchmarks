@@ -509,6 +509,234 @@ DECLARE_TRACEPOINT(
 
 
 
+// ──────────────────────────────────────────────────────────────────────────────
+// e4_latentros: new tracepoints for LatentROS workload characterization
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// `robotperf_odometry_input_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_odometry_input_cb_init,
+  const void * odometry_input_node,
+  const void * odometry_input_msg,
+  uint32_t odometry_input_header_nsec_arg,
+  uint32_t odometry_input_header_sec_arg,
+  size_t odometry_input_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_odometry_input_cb_fini,
+  const void * odometry_input_node,
+  const void * odometry_input_msg,
+  uint32_t odometry_input_header_nsec_arg,
+  uint32_t odometry_input_header_sec_arg,
+  size_t odometry_input_msg_size,
+  uint32_t key)
+
+/// `robotperf_odometry_output_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_odometry_output_cb_init,
+  const void * odometry_output_node,
+  const void * odometry_output_msg,
+  uint32_t odometry_output_header_nsec_arg,
+  uint32_t odometry_output_header_sec_arg,
+  size_t odometry_output_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_odometry_output_cb_fini,
+  const void * odometry_output_node,
+  const void * odometry_output_msg,
+  uint32_t odometry_output_header_nsec_arg,
+  uint32_t odometry_output_header_sec_arg,
+  size_t odometry_output_msg_size,
+  uint32_t key)
+
+/// `robotperf_pose_cov_input_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_pose_cov_input_cb_init,
+  const void * pose_cov_input_node,
+  const void * pose_cov_input_msg,
+  uint32_t pose_cov_input_header_nsec_arg,
+  uint32_t pose_cov_input_header_sec_arg,
+  size_t pose_cov_input_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_pose_cov_input_cb_fini,
+  const void * pose_cov_input_node,
+  const void * pose_cov_input_msg,
+  uint32_t pose_cov_input_header_nsec_arg,
+  uint32_t pose_cov_input_header_sec_arg,
+  size_t pose_cov_input_msg_size,
+  uint32_t key)
+
+/// `robotperf_pose_cov_output_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_pose_cov_output_cb_init,
+  const void * pose_cov_output_node,
+  const void * pose_cov_output_msg,
+  uint32_t pose_cov_output_header_nsec_arg,
+  uint32_t pose_cov_output_header_sec_arg,
+  size_t pose_cov_output_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_pose_cov_output_cb_fini,
+  const void * pose_cov_output_node,
+  const void * pose_cov_output_msg,
+  uint32_t pose_cov_output_header_nsec_arg,
+  uint32_t pose_cov_output_header_sec_arg,
+  size_t pose_cov_output_msg_size,
+  uint32_t key)
+
+/// `robotperf_occupancy_grid_output_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_occupancy_grid_output_cb_init,
+  const void * occupancy_grid_output_node,
+  const void * occupancy_grid_output_msg,
+  uint32_t occupancy_grid_output_header_nsec_arg,
+  uint32_t occupancy_grid_output_header_sec_arg,
+  size_t occupancy_grid_output_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_occupancy_grid_output_cb_fini,
+  const void * occupancy_grid_output_node,
+  const void * occupancy_grid_output_msg,
+  uint32_t occupancy_grid_output_header_nsec_arg,
+  uint32_t occupancy_grid_output_header_sec_arg,
+  size_t occupancy_grid_output_msg_size,
+  uint32_t key)
+
+/// `robotperf_joint_state_input_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_joint_state_input_cb_init,
+  const void * joint_state_input_node,
+  const void * joint_state_input_msg,
+  uint32_t joint_state_input_header_nsec_arg,
+  uint32_t joint_state_input_header_sec_arg,
+  size_t joint_state_input_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_joint_state_input_cb_fini,
+  const void * joint_state_input_node,
+  const void * joint_state_input_msg,
+  uint32_t joint_state_input_header_nsec_arg,
+  uint32_t joint_state_input_header_sec_arg,
+  size_t joint_state_input_msg_size,
+  uint32_t key)
+
+/// `robotperf_joint_state_output_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_joint_state_output_cb_init,
+  const void * joint_state_output_node,
+  const void * joint_state_output_msg,
+  uint32_t joint_state_output_header_nsec_arg,
+  uint32_t joint_state_output_header_sec_arg,
+  size_t joint_state_output_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_joint_state_output_cb_fini,
+  const void * joint_state_output_node,
+  const void * joint_state_output_msg,
+  uint32_t joint_state_output_header_nsec_arg,
+  uint32_t joint_state_output_header_sec_arg,
+  size_t joint_state_output_msg_size,
+  uint32_t key)
+
+/// `robotperf_path_input_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_path_input_cb_init,
+  const void * path_input_node,
+  const void * path_input_msg,
+  uint32_t path_input_header_nsec_arg,
+  uint32_t path_input_header_sec_arg,
+  size_t path_input_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_path_input_cb_fini,
+  const void * path_input_node,
+  const void * path_input_msg,
+  uint32_t path_input_header_nsec_arg,
+  uint32_t path_input_header_sec_arg,
+  size_t path_input_msg_size,
+  uint32_t key)
+
+/// `robotperf_path_output_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_path_output_cb_init,
+  const void * path_output_node,
+  const void * path_output_msg,
+  uint32_t path_output_header_nsec_arg,
+  uint32_t path_output_header_sec_arg,
+  size_t path_output_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_path_output_cb_fini,
+  const void * path_output_node,
+  const void * path_output_msg,
+  uint32_t path_output_header_nsec_arg,
+  uint32_t path_output_header_sec_arg,
+  size_t path_output_msg_size,
+  uint32_t key)
+
+/// `robotperf_twist_output_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_twist_output_cb_init,
+  const void * twist_output_node,
+  const void * twist_output_msg,
+  size_t twist_output_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_twist_output_cb_fini,
+  const void * twist_output_node,
+  const void * twist_output_msg,
+  size_t twist_output_msg_size,
+  uint32_t key)
+
+/// `robotperf_pose_stamped_input_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_pose_stamped_input_cb_init,
+  const void * pose_stamped_input_node,
+  const void * pose_stamped_input_msg,
+  uint32_t pose_stamped_input_header_nsec_arg,
+  uint32_t pose_stamped_input_header_sec_arg,
+  size_t pose_stamped_input_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_pose_stamped_input_cb_fini,
+  const void * pose_stamped_input_node,
+  const void * pose_stamped_input_msg,
+  uint32_t pose_stamped_input_header_nsec_arg,
+  uint32_t pose_stamped_input_header_sec_arg,
+  size_t pose_stamped_input_msg_size,
+  uint32_t key)
+
+/// `robotperf_disparity_output_cb_init` / `_fini`
+DECLARE_TRACEPOINT(
+  robotperf_disparity_output_cb_init,
+  const void * disparity_output_node,
+  const void * disparity_output_msg,
+  uint32_t disparity_output_header_nsec_arg,
+  uint32_t disparity_output_header_sec_arg,
+  size_t disparity_output_msg_size,
+  uint32_t key)
+
+DECLARE_TRACEPOINT(
+  robotperf_disparity_output_cb_fini,
+  const void * disparity_output_node,
+  const void * disparity_output_msg,
+  uint32_t disparity_output_header_nsec_arg,
+  uint32_t disparity_output_header_sec_arg,
+  size_t disparity_output_msg_size,
+  uint32_t key)
+
 #ifdef __cplusplus
 }
 #endif

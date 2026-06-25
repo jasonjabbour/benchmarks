@@ -532,6 +532,105 @@ TRACEPOINT_EVENT(
     )
 )
 
+// ──────────────────────────────────────────────────────────────────────────────
+// e4_latentros tracepoints
+// ──────────────────────────────────────────────────────────────────────────────
+
+#define _STANDARD_TP_ARGS \
+  const void *, node_arg, \
+  const void *, msg_arg, \
+  uint32_t, header_nsec_arg, \
+  uint32_t, header_sec_arg, \
+  size_t, msg_size_arg, \
+  uint32_t, key_arg
+
+#define _STANDARD_TP_FIELDS(prefix) \
+  ctf_integer_hex(const void *, prefix##_node, node_arg) \
+  ctf_integer_hex(const void *, prefix##_msg, msg_arg) \
+  ctf_integer(uint32_t, header_nsec, header_nsec_arg) \
+  ctf_integer(uint32_t, header_sec, header_sec_arg) \
+  ctf_integer(size_t, msg_size, msg_size_arg) \
+  ctf_integer(uint32_t, key, key_arg) \
+  ctf_string(version, tracetools_benchmark_VERSION)
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_odometry_input_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(odometry_input)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_odometry_input_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(odometry_input)))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_odometry_output_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(odometry_output)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_odometry_output_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(odometry_output)))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_pose_cov_input_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(pose_cov_input)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_pose_cov_input_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(pose_cov_input)))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_pose_cov_output_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(pose_cov_output)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_pose_cov_output_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(pose_cov_output)))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_occupancy_grid_output_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(occupancy_grid_output)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_occupancy_grid_output_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(occupancy_grid_output)))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_joint_state_input_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(joint_state_input)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_joint_state_input_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(joint_state_input)))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_joint_state_output_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(joint_state_output)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_joint_state_output_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(joint_state_output)))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_path_input_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(path_input)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_path_input_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(path_input)))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_path_output_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(path_output)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_path_output_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(path_output)))
+
+// Twist output (no header — use msg_size + key only)
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_twist_output_cb_init,
+  TP_ARGS(const void *, node_arg, const void *, msg_arg, size_t, msg_size_arg, uint32_t, key_arg),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, twist_output_node, node_arg)
+    ctf_integer_hex(const void *, twist_output_msg,  msg_arg)
+    ctf_integer(size_t,   msg_size, msg_size_arg)
+    ctf_integer(uint32_t, key,      key_arg)
+    ctf_string(version, tracetools_benchmark_VERSION)
+  ))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_twist_output_cb_fini,
+  TP_ARGS(const void *, node_arg, const void *, msg_arg, size_t, msg_size_arg, uint32_t, key_arg),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, twist_output_node, node_arg)
+    ctf_integer_hex(const void *, twist_output_msg,  msg_arg)
+    ctf_integer(size_t,   msg_size, msg_size_arg)
+    ctf_integer(uint32_t, key,      key_arg)
+    ctf_string(version, tracetools_benchmark_VERSION)
+  ))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_pose_stamped_input_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(pose_stamped_input)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_pose_stamped_input_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(pose_stamped_input)))
+
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_disparity_output_cb_init,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(disparity_output)))
+TRACEPOINT_EVENT(TRACEPOINT_PROVIDER, robotperf_disparity_output_cb_fini,
+  TP_ARGS(_STANDARD_TP_ARGS), TP_FIELDS(_STANDARD_TP_FIELDS(disparity_output)))
+
+#undef _STANDARD_TP_ARGS
+#undef _STANDARD_TP_FIELDS
+
 #endif  // _TRACETOOLS_BENCHMARK__TP_CALL_H_
 
 #include <lttng/tracepoint-event.h>

@@ -188,4 +188,10 @@ install(
   FILES_MATCHING PATTERN "*.hpp"
 )
 
+# TODO: REFACTOR THIS AND REMOVE FROM PACKAGE
+install(PROGRAMS
+  launch/scene_generation.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_auto_package(INSTALL_TO_SHARE launch)

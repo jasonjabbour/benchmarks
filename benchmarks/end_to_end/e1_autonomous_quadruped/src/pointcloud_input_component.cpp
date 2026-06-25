@@ -17,6 +17,12 @@ PointCloudInputComponent::PointCloudInputComponent (const rclcpp::NodeOptions & 
   // Parameter to enable or disable quantization
   quantization_enabled_ = this->declare_parameter<bool>("quantization_enabled", false);
 
+  // LatentROS: pad PointCloud2 data to match real-world sensor sizes.
+  // Gazebo simulated Velodyne produces ~100KB point clouds, but real sensors
+  // output much larger data (VLP-16: ~700KB, VLP-32: ~1.5MB, OS1-64: ~3MB).
+  // Set target_msg_size_kb to inflate the message to the desired size (0 = no padding).
+  target_msg_size_kb_ = this->declare_parameter<int>("target_msg_size_kb", 0);
+
   // Get the input_topic_name parameter from the parameter server with default value "input"
   std::string input_topic_name = this->declare_parameter<std::string>("input_topic_name", "input");
 
@@ -81,13 +87,28 @@ void PointCloudInputComponent::pointCloudCb(
    // -------------------------------------------
   // If quantization is DISABLED:
   // -------------------------------------------
-  if (!quantization_enabled_) 
+  if (!quantization_enabled_)
   {
     // If no one is subscribed to the standard publisher, skip
     if (pub_pointcloud_->get_subscription_count() < 1) {
       return;
     }
-    // Just publish the original
+
+    // LatentROS: pad point cloud to target size to match real-world sensors
+    if (target_msg_size_kb_ > 0) {
+      size_t target_bytes = static_cast<size_t>(target_msg_size_kb_) * 1024;
+      if (cloud_msg->data.size() < target_bytes) {
+        size_t original_size = cloud_msg->data.size();
+        cloud_msg->data.resize(target_bytes);
+        // Fill padded region by repeating original data
+        for (size_t i = original_size; i < target_bytes; i++) {
+          cloud_msg->data[i] = cloud_msg->data[i % original_size];
+        }
+        cloud_msg->row_step = target_bytes;
+        cloud_msg->width = target_bytes / cloud_msg->point_step;
+      }
+    }
+
     pub_pointcloud_->publish(*cloud_msg);
   }
   else
